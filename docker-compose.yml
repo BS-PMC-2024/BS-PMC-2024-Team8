@@ -6,6 +6,8 @@ services:
     ports:
       - "6500:6500"
     restart: always
+    environment:
+      - MONGO_URI=mongodb+srv://ahkcht981:Ahkcht98@bstorec.5l8i8lk.mongodb.net/nicerDebt
 
   frontend:
     build: frontend/vls/
