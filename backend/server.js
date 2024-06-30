@@ -1,130 +1,166 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import axios from 'axios';
-import Register from './Register';
+// Importing required modules
+const mongoose = require('mongoose'); // MongoDB object modeling tool
+const bodyParser = require('body-parser'); // Parse incoming request bodies
+const cors = require('cors'); // Enable Cross-Origin Resource Sharing
+const express = require('express'); // Fast, unopinionated, minimalist web framework for Node.js
 
-// Mock axios
-jest.mock('axios');
+const app = express(); // Create an instance of the express application
 
-describe('Register Component', () => {
-  beforeEach(() => {
-    axios.get.mockClear();
-    axios.post.mockClear();
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-  });
+app.use(bodyParser.json()); // Parse JSON bodies
+app.use(cors()); // Enable CORS for all routes
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+// Connect to MongoDB database
+mongoose.connect('mongodb+srv://ahkcht981:Ahkcht98@bstorec.5l8i8lk.mongodb.net/nicerDebt', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Error connecting to MongoDB:', err));
 
-  test('handles input change', () => {
-    render(<Register />);
+const userSchema = new mongoose.Schema({
+  full_name: String,
+  email: String,
+  country: String,
+  password: String,
+  company: String,
+  premission: String
+});
+// Define schema for processes
+const processSchema = new mongoose.Schema({
+  cname: String,
+  status: String,
+  file: String,
+  moneyC: String,
+  peopleC: String,
+  peopleR: String,
+  date: String
+});
+const Process = mongoose.model('Process', processSchema, 'processes');
+// Define schema for processes
+const transactionSchema = new mongoose.Schema({
+  first_name: String,
+  last_name: String,
+  age: String,
+  city: String,
+  pid: String,
+  left: String,
+  amount: String
+});
+const Transaction = mongoose.model('Transaction', processSchema, 'transactions');
+// Create User model
+const User = mongoose.model('User', userSchema, 'users');
+app.get('/allusers', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+}
+);
 
-    fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
-    expect(screen.getByPlaceholderText('Name').value).toBe('John Doe');
+app.get('/allprocesses', async (req, res) => {
+  try {
+    const processes = await Process.find();
+    res.status(200).json({ success: true, processes });
+  } catch (error) {
+    console.error('Error fetching processes:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+}
+);
+app.get('/alltransactions', async (req, res) => {
+  try {
+    const transactions = await Transaction.find();
+    res.status(200).json({ success: true, transactions });
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+// Handle login request
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email, password });
+    if (user) {
+      res.json({ success: true, message: 'Credentials found', premission: user.premission });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+  } catch (error) {
+    console.error('Error checking credentials:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
-    expect(screen.getByPlaceholderText('Email').value).toBe('john@example.com');
+// Handle user registration request
+app.post('/register', async (req, res) => {
+  const userData = req.body;
+  userData.premission = "Company";
 
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password1!' } });
-    expect(screen.getByPlaceholderText('Password').value).toBe('Password1!');
+  try {
+    const newUser = new User(userData);
+    await newUser.save();
+    res.status(201).json({ success: true, message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
-    fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: 'USA' } });
-    expect(screen.getByPlaceholderText('Country').value).toBe('USA');
+// Endpoint to update user information
+app.put('/user/:email', async (req, res) => {
+  try {
+    const email = req.params.email;
+    const updatedUserData = req.body;
+    const updatedUser = await User.findOneAndUpdate({ email }, updatedUserData, { new: true });
+    console.log('Updated user:', updatedUser);
+    console.log('updatedUserData : ', updatedUserData);
+    if (updatedUser) {
+      res.status(200).json({ success: true, user: updatedUser });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error updating user information:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
-    fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
-    expect(screen.getByPlaceholderText('Company').value).toBe('ABC Corp');
-  });
+// Get user information
+app.get('/:email', async (req, res) => {
+  try {
+    const email = req.params.email;
+    const user = await User.findOne({ email });
+    if (user) {
+      res.status(200).json({ success: true, data: user });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching user information:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
-  test('validates form submission', async () => {
-    render(<Register />);
+// Endpoint to check permissions
+app.post('/check-permission', async (req, res) => {
+  const { email } = req.body;
 
-    fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: '' } });
+  try {
+    const user = await User.findOne({ email });
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error('Error checking permission:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
-    fireEvent.click(screen.getByText('Sign Up'));
 
-    await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Please fill in all fields. if you don't have an apartment number, please fill in 0.");
-    });
-  });
-
-  test('checks password validation for symbols and numbers', async () => {
-    render(<Register />);
-
-    fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: 'USA' } });
-    fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
-
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'pass' } });
-    fireEvent.click(screen.getByText('Sign Up'));
-
-    await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Password must be at least 8 characters long.");
-    });
-
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password' } });
-    fireEvent.click(screen.getByText('Sign Up'));
-
-    await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Password must contain at least one symbol.");
-    });
-
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password!' } });
-    fireEvent.click(screen.getByText('Sign Up'));
-
-    await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Password must contain numbers.");
-    });
-  });
-
-  test('handles form submission with valid inputs', async () => {
-    axios.get.mockResolvedValueOnce({ data: null });
-    axios.post.mockResolvedValueOnce({ data: { success: true } });
-
-    render(<Register />);
-
-    fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password1!' } });
-    fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: 'USA' } });
-    fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
-
-    fireEvent.click(screen.getByText('Sign Up'));
-
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/john@example.com');
-      expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/register', {
-        full_name: 'John Doe',
-        email: 'john@example.com',
-        password: 'Password1!',
-        country: 'USA',
-        company: 'ABC Corp'
-      });
-      expect(window.alert).toHaveBeenCalledWith('User created successfully');
-    });
-  });
-
-  test('checks for user existence', async () => {
-    axios.get.mockResolvedValueOnce({ data: { email: 'john@example.com' } });
-
-    render(<Register />);
-
-    fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password1!' } });
-    fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: 'USA' } });
-    fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
-
-    fireEvent.click(screen.getByText('Sign Up'));
-
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/john@example.com');
-      expect(window.alert).toHaveBeenCalledWith('User already exists, please log in.');
-    });
-  });
+// Start the server
+const PORT = 6500;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
