@@ -4,9 +4,7 @@ import './animation.css'
 import Login from "./Login";
 import Register from "./Register";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
 
-// FirstPage component
 function FirstPage() {
   const location = useLocation();
 
