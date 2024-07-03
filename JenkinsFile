@@ -7,11 +7,12 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {               
-                git 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
+            steps {
+                // Use the credentialsId to access the GitHub repository
+                git credentialsId: 'vlsTeam8Final', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
             }
         }
-        
+
         stage('Build Docker Images') {
             steps {
                 script {
