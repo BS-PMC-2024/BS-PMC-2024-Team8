@@ -16,5 +16,5 @@ COPY . .
 # Expose the port your app runs on
 EXPOSE 6500
 
-# Command to run your application
-CMD ["node", "server.js"]
+# Start the backend server
+CMD ["npm", "start"]
