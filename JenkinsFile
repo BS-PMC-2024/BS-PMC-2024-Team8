@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Use the credentialsId to access the GitHub repository
                 git credentialsId: 'vlsTeam8Final', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
             }
         }
@@ -16,7 +15,8 @@ pipeline {
         stage('Build Docker Images') {
             agent {
                 docker {
-                    image 'python:2-alpine'
+                    image 'docker/compose:3.9'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
                 }
             }
             steps {
@@ -25,10 +25,10 @@ pipeline {
                 }
             }
         }
+
         stage('Run Docker Compose') {
             steps {
                 script {
-                    // Start Docker Compose services
                     sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
                 }
             }
@@ -37,7 +37,6 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run npm tests in the frontend/vls directory
                     sh 'docker-compose exec frontend sh -c "cd vls && npm test"'
                 }
             }
