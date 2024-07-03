@@ -12,35 +12,24 @@ pipeline {
             }
         }
 
-    stage('Build Docker Images') {
+        stage('Build and Test') {
             steps {
-                script {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE exec frontend npm test'
             }
         }
 
-        stage('Run Docker Compose') {
+        stage('Deploy') {
             steps {
-                script {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    sh 'docker-compose exec frontend sh -c "cd vls && npm test"'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
             }
         }
 
         stage('Cleanup') {
             steps {
-                script {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
             }
         }
     }
