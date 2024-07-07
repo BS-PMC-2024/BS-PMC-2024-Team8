@@ -17,4 +17,4 @@ services:
     depends_on:
       - frontend
       - backend
-    command: ["sh", "-c", "npm run test"] # Adjust this command to run your tests
+    command: ["sh", "-c", "npm run test"]
