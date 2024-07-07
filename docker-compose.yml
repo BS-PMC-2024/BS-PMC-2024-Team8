@@ -12,9 +12,9 @@ services:
     image: jonyc97/backend-vls:latest
     ports:
       - "5000:5000"
-   tests:
+  tests:
     image: jonyc97/vls:latest
     depends_on:
       - frontend
       - backend
-    command: ["sh", "-c", "npm run test"]
+    command: ["sh", "-c", "npm run test"] # Adjust this command to run your tests
