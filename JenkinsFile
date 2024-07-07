@@ -17,9 +17,14 @@ pipeline {
             }
         }
 
-        stage('Build and Test') {
+        stage('Build') {
             steps {
                 sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
+            }
+        }
+
+        stage('Test') {
+            steps {
                 sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
                 sh 'docker-compose -f $DOCKER_COMPOSE_FILE exec frontend npm test'
             }
