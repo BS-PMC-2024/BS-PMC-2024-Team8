@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'jenking-vls', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
+                git credentialsId: 'vls-project-tm8', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
             }
         }
 
