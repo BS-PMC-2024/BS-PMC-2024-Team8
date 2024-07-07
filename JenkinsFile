@@ -13,13 +13,6 @@ pipeline {
         }
 
         stage('Build and Test') {
-            agent {
-                dockerfile {
-                    filename 'Dockerfile'
-                    label 'labush'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
             steps {
                 sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
                 sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
