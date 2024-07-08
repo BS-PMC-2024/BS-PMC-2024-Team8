@@ -11,7 +11,7 @@ services:
   backend:
     image: jonyc97/backend-vls:latest
     ports:
-      - "5000:5000"
+      - "6500:6500"
   tests:
     image: jonyc97/vls:latest
     depends_on:
