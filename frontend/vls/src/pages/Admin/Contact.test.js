@@ -18,7 +18,8 @@ describe('Contact Component', () => {
         window.history.pushState({}, 'Test page', route);
         return render(ui, { wrapper: MemoryRouter });
     };
-
+    
+    // check?
     beforeEach(() => {
         jest.clearAllMocks();
         jest.spyOn(window, 'alert').mockImplementation(() => {});

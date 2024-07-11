@@ -129,7 +129,7 @@ function Contact() {
     } else if (name === "phone") {
       const phoneRegex = /^05[0-9]{8}$/;
       if (!phoneRegex.test(value)) {
-        setPhoneError("Invalid phone number");
+        setPhoneError("Invalid phone number ");
       }else{
         setPhoneError('');
       }
