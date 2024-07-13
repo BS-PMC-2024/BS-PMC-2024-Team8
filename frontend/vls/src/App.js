@@ -8,15 +8,17 @@ import Proceses from "./pages/Admin/Proceses";
 import Contact from "./pages/Admin/Contact";
 import Customers from "./pages/Admin/Customers";
 import Analytics from "./pages/Admin/Analytics";
+import EditCustomer from "./pages/Admin/EditCustomer";
+//add import
 
 // Main App component
 function App() {
   useEffect(() => {
     // Dynamically create the viewport meta tag
-    const viewportMeta = document.createElement('meta');
-    viewportMeta.name = 'viewport';
-    viewportMeta.content = 'width=device-width, initial-scale=1.0';
-    
+    const viewportMeta = document.createElement("meta");
+    viewportMeta.name = "viewport";
+    viewportMeta.content = "width=device-width, initial-scale=1.0";
+
     // Append the meta tag to the document head
     document.head.appendChild(viewportMeta);
 
@@ -27,17 +29,18 @@ function App() {
   }, []);
   return (
     <div className="App">
-        <Router>
-          <Routes>
-            <Route path="/" element={<FirstPage />} />
-            <Route path="/forgotpassword" element={<ForgotPassword />} />
-            <Route path="/homeAdmin" element={<Home />} />
-            <Route path="/processAdmin" element={<Proceses />} />
-            <Route path="/contactAdmin" element={<Contact />} />
-            <Route path="/customersAdmin" element={<Customers />} />
-            <Route path="/analyticsAdmin" element={<Analytics />} />
-          </Routes>
-        </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<FirstPage />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/homeAdmin" element={<Home />} />
+          <Route path="/processAdmin" element={<Proceses />} />
+          <Route path="/contactAdmin" element={<Contact />} />
+          <Route path="/customersAdmin" element={<Customers />} />
+          <Route path="/analyticsAdmin" element={<Analytics />} />
+          <Route path="/EditCustomer" element={<EditCustomer />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
