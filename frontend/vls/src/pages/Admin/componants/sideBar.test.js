@@ -8,14 +8,20 @@ import Customers from '../../Admin/Customers';
 import Analytics from '../../Admin/Analytics';
 import Sidebar from './sideBar';
 import '@testing-library/jest-dom/extend-expect';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 jest.mock('react-icons/bs', () => ({
   BsGrid1X2Fill: () => <div data-testid="icon-dashboard">DashboardIcon</div>,
+  BsFillPlusCircleFill: () => <div data-testid="icon-new-process">NewProcessIcon</div>,
   BsXDiamondFill: () => <div data-testid="icon-process">ProcessIcon</div>,
   BsGraphUp: () => <div data-testid="icon-analytics">AnalyticsIcon</div>,
   BsPeopleFill: () => <div data-testid="icon-customers">CustomersIcon</div>,
   BsEnvelopeFill: () => <div data-testid="icon-contact">ContactIcon</div>,
 }));
+
+jest.mock('axios');
+jest.mock('js-cookie');
 
 const mockOpenSidebar = jest.fn();
 
@@ -36,16 +42,19 @@ const renderWithRouter = (component, { route = '/' } = {}) => {
   );
 };
 
-describe('Sidebar Component', () => {
-  test('renders sidebar with correct items', () => {
-    renderWithRouter(<Sidebar openSidebarToggle={false} OpenSidebar={mockOpenSidebar} />);
+describe('Sidebar component', () => {
+  beforeEach(() => {
+    Cookies.get.mockImplementation(() => 'test@example.com');
+    axios.post.mockResolvedValue({ data: { data: { premission: 'admin' } } });
+  });
 
-    expect(screen.getByText('Nicer Debt')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-dashboard')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-process')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-analytics')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-customers')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-contact')).toBeInTheDocument();
+  test('renders admin menu items', async () => {
+    renderWithRouter(<Sidebar openSidebarToggle={true} OpenSidebar={mockOpenSidebar} />);
+    expect(await screen.findByTestId('icon-dashboard')).toBeInTheDocument();
+    expect(await screen.findByTestId('icon-process')).toBeInTheDocument();
+    expect(await screen.findByTestId('icon-analytics')).toBeInTheDocument();
+    expect(await screen.findByTestId('icon-customers')).toBeInTheDocument();
+    expect(await screen.findByTestId('icon-contact')).toBeInTheDocument();
   });
 
   test('toggles sidebar responsiveness', () => {

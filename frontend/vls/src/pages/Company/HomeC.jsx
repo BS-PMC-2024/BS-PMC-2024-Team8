@@ -1,22 +1,20 @@
 import React , {useEffect, useState} from 'react'
-import Header from './componants/Header'
-import 
-{ BsPeopleFill,BsCheckCircle,BsArrowRepeat,BsCash}
- from 'react-icons/bs'
- import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import './stylesAdmin.css'
+import Header from '../Admin/componants/Header'
+import { BsPeopleFill,BsCheckCircle,BsArrowRepeat,BsCash} from 'react-icons/bs'
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import '../Admin/stylesAdmin.css'
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
-import Sidebar from './componants/sideBar'
+import Sidebar from '../Admin/componants/sideBar'
 
-function Home() {
+function HomeC() {
   const navigate = useNavigate();
   const [Usersnumber, setUsersnumber] = useState(0);
   const [ProcessesnumberO, setProcessesnumberO] = useState(0);
   const [ProcessesnumberC, setProcessesnumberC] = useState(0);
   const [MoneyCollected, setMoneyCollected] = useState(0);
-  const [topActive, setTopActive] = useState([]);
+  const [bestDiscount, setBestDiscount] = useState([]);
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
   useEffect(() => {
     const checkAdminPermission = async () => {
@@ -28,8 +26,7 @@ function Home() {
       }
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
-
-        if (!response.data.data.premission == "admin") {
+        if (!response.data.premission == "company") {
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -43,7 +40,8 @@ function Home() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:6500/allusers');
+        const company = Cookies.get('company');
+        const response = await axios.get(`http://localhost:6500/allusers/${company}`);
         setUsersnumber(response.data.users.length);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -55,28 +53,21 @@ function Home() {
   useEffect(() => {
     const fetchProcesses = async () => {
       try {
-        const response = await axios.get('http://localhost:6500/allprocesses');
-        const processes = response.data.processes;
+        const company = Cookies.get('company');
+        const response = await axios.get(`http://localhost:6500/allprocesses/${company}`);
+        const processes = response.data.filteredProcesses;
         let openedProcesses = 0;
         let completedProcesses = 0;
         let moneyCollected = 0;
-        const companyCount = {};
         const monthlyMoney = {};
-
         processes.forEach((process) => {
           if (process.status === 'opened') {
             openedProcesses++;
+            moneyCollected += parseInt(process.moneyC, 10);
           } else {
             completedProcesses++;
             moneyCollected += parseInt(process.moneyC, 10);
           }
-
-          if (companyCount[process.cname]) {
-            companyCount[process.cname]++;
-          } else {
-            companyCount[process.cname] = 1;
-          }
-
           const [day, month, year] = process.date.split('/');
           const monthYear = `${month}/${year}`;
           if (!monthlyMoney[monthYear]) {
@@ -89,13 +80,6 @@ function Home() {
         setProcessesnumberC(completedProcesses);
         setMoneyCollected(moneyCollected);
 
-        const sortedCompanies = Object.entries(companyCount)
-          .map(([name, count]) => ({ name, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 5);
-
-        setTopActive(sortedCompanies);
-
         const sortedMonthlyMoney = Object.entries(monthlyMoney)
           .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
           .sort((a, b) => {
@@ -105,13 +89,44 @@ function Home() {
           });
 
         setMonthlyMoneyCollected(sortedMonthlyMoney);
+
       } catch (error) {
         console.error('Error fetching processes:', error);
       }
     };
     fetchProcesses();
   }, []);
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const company = Cookies.get('company');
+        console.log(company);
+        const response = await axios.get(`http://localhost:6500/transactions/${company}`);
+        const transactions = response.data.transactions;
+        const discountCount = {};
+        transactions.forEach((transaction) => {
+          // Count transactions by discount
+          if (transaction.discount) {
+            if (discountCount[transaction.discount]) {
+              discountCount[transaction.discount]++;
+            } else {
+              discountCount[transaction.discount] = 1;
+            }
+          }
+        });
 
+        const discountData = Object.entries(discountCount).map(([name, plans]) => ({
+          name,
+          plans,
+        }));
+        setBestDiscount(discountData);
+
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+    fetchTransactions();
+  }, []);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
@@ -160,12 +175,12 @@ function Home() {
 
         <div className='charts'>
           <div>
-            <h3 style={{ textAlign: 'center' }}>Top Active Companies</h3>
-            <ResponsiveContainer width="100%" height={400}>
+          <h3 style={{ textAlign: 'center' }}>Top Discount Plans</h3>
+            <ResponsiveContainer width='100%' height={400}>
               <BarChart
                 width={500}
                 height={300}
-                data={topActive}
+                data={bestDiscount}
                 margin={{
                   top: 5,
                   right: 30,
@@ -174,15 +189,15 @@ function Home() {
                 }}
                 barSize={20}
               >
-                <XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
+                <XAxis dataKey='name' scale='point' padding={{ left: 10, right: 10 }} />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Bar dataKey="count" fill="#8884d8" background={{ fill: '#eee' }} />
+                <CartesianGrid strokeDasharray='3 3' />
+                <Bar dataKey='plans' fill='#E178C5' background={{ fill: '#eee' }} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+         </div>
           <div>
             <h3 style={{ textAlign: 'center' }}>Monthly Money Collected</h3>
             <ResponsiveContainer width="100%" height={400}>
@@ -212,4 +227,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomeC;

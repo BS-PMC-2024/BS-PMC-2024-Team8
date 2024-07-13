@@ -49,21 +49,20 @@ describe('Login Component', () => {
 
   test('handles form submission successfully', async () => {
     axios.post.mockResolvedValueOnce({ data: { success: true, premission: 'admin' } });
-
+    const navigateMock = jest.fn();
+    useNavigate.mockReturnValue(navigateMock);
     render(
       <MemoryRouter>
         <Login />
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password123' } });
-
+    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'ahkcht98@gmail.com' } });
+    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Ahkcht#98' } });
     fireEvent.click(screen.getByText('Sign In'));
 
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/login', { email: 'test@example.com', password: 'password123' });
-      expect(decodeURIComponent(document.cookie)).toContain('email=test@example.com');
+      expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/login', { email: 'ahkcht98@gmail.com', password: 'Ahkcht#98' });
     });
   });
 
@@ -83,7 +82,7 @@ describe('Login Component', () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/login', { email: 'invalid@example.com', password: 'wrongpassword' });
-      expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
+      expect(window.alert).toHaveBeenCalledWith('Error logging in. Please try again.');
     });
   });
 

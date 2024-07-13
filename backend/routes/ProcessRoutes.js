@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get('/allprocesses', async (req, res) => {
     try {
+      console.log('Fetching processes')
       const processes = await Process.find();
       res.status(200).json({ success: true, processes });
     } catch (error) {

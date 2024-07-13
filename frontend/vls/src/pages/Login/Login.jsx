@@ -43,19 +43,21 @@ function Login(props) {
     try {
 
       const response = await axios.post('http://localhost:6500/login', { email, password });
-      if (response.data.success) {
+      if (response.data.data.premission) {
         if (!getCookie(email)) {
           setCookie('email', email, 30);
-          if (response.data.premission === 'admin') {
+          console.log(getCookie('email'));
+          if (response.data.data.premission === 'admin') {
             navigate('/homeAdmin', { replace: true });
           }
-          if (response.data.premission === 'company') {
+          if (response.data.data.premission === 'company') {
+            setCookie('company', response.data.data.company, 30);
             navigate('/homeCompany', { replace: true });
           }
         }
       } else {
         deleteCookie('email');
-        setMessage('Invalid credentials');
+        alert('Invalid credentials');
       }
     } catch (error) {
       console.error('Error:', error);
