@@ -1,0 +1,52 @@
+pipeline {
+    agent {
+        docker {
+            image 'docker:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+
+    environment {
+        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'vls-project-tm8', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE exec frontend npm test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
