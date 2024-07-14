@@ -21,7 +21,6 @@ const ForgotPassword = () => {
           const randomIndex = Math.floor(Math.random() * characters.length);
           code += characters.charAt(randomIndex);
         }
-      
         return code;
     }
     

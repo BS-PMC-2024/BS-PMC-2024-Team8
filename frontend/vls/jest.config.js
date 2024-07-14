@@ -18,6 +18,4 @@ module.exports = {
   transformIgnorePatterns: [
     "node_modules/(?!(axios)/)", // Add this line to ensure axios is transformed
   ],
-  testRunner: "jest-circus/runner", // Specify the test runner
-  silent: true, // Suppress printing of ignored nodes
 };
