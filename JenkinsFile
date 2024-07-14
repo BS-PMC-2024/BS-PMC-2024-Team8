@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
@@ -8,45 +13,33 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'vlsTeam8Final', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
+                git credentialsId: 'vls-project-tm8', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
             }
         }
 
-        stage('Build Docker Images') {
-            agent {
-                docker {
-                    image 'docker/compose:3.9'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
+        stage('Build') {
             steps {
-                script {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
             }
         }
 
-        stage('Run Docker Compose') {
+        stage('Test') {
             steps {
-                script {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE exec frontend npm test'
             }
         }
 
-        stage('Run Tests') {
+        stage('Deploy') {
             steps {
-                script {
-                    sh 'docker-compose exec frontend sh -c "cd vls && npm test"'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
             }
         }
 
         stage('Cleanup') {
             steps {
-                script {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
             }
         }
     }
