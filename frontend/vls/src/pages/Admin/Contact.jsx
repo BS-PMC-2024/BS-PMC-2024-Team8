@@ -50,6 +50,9 @@ function Contact() {
   useEffect(() => {
     setSelectedCompany(selectedCompany);
     setUserEmail(userEmail);
+    console.log("in use effect ")
+    console.log(selectedCompany)
+    console.log(userEmail)
   }, [selectedCompany]);
 
   useEffect(() => {
@@ -78,6 +81,7 @@ function Contact() {
           const email = user.email;
           if (!cNames[companyName]) {
             cNames[companyName] = [];
+            
           }
           cNames[companyName].push(email);
         }
@@ -105,12 +109,12 @@ function Contact() {
     const serviceId = "bstorecontact";
     const templateId = "template_n389dr4";
     try {
-      // await emailjs.send(serviceId, templateId, {
-      //   name: name,
-      //   email: userEmail,
-      //   phone: phone,
-      //   description: description,
-      // });
+      await emailjs.send(serviceId, templateId, {
+      name: name,
+      email: userEmail,
+      phone: phone,
+      description: description,
+      });
       alert("Email successfully sent. Check your inbox.");
     } catch (error) {
       alert("Failed to send email. Please try again.");
@@ -143,6 +147,8 @@ function Contact() {
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
+    console.log("in handle email")
+    console.log(e.target.value)
     setSelectedCompany(value);
     setUserEmail(cnames[value][0]);
 

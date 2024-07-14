@@ -18,8 +18,7 @@ describe('Contact Component', () => {
         window.history.pushState({}, 'Test page', route);
         return render(ui, { wrapper: MemoryRouter });
     };
-    
-    // check?
+
     beforeEach(() => {
         jest.clearAllMocks();
         jest.spyOn(window, 'alert').mockImplementation(() => {});
@@ -37,32 +36,32 @@ describe('Contact Component', () => {
 
     test('renders all input fields', () => {
         renderWithRouter(<Contact />);
-        const nameInput = screen.getByLabelText(/name/i);
-        const phoneInput = screen.getByLabelText(/phone/i);
-        const emailInput = screen.getByLabelText(/email/i);
-        const descriptionTextarea = screen.getByLabelText(/description/i);
+        const nameInput = screen.getByLabelText(/your name/i);
+        const phoneInput = screen.getByLabelText(/your phone/i);
+        const companySelect = screen.getByLabelText(/company/i);
+        const descriptionTextarea = screen.getByLabelText(/description message/i);
         
         expect(nameInput).toBeInTheDocument();
         expect(phoneInput).toBeInTheDocument();
-        expect(emailInput).toBeInTheDocument();
+        expect(companySelect).toBeInTheDocument();
         expect(descriptionTextarea).toBeInTheDocument();
     });
 
     test('allows input in all fields', () => {
         renderWithRouter(<Contact />);
-        const nameInput = screen.getByLabelText(/name/i);
-        const phoneInput = screen.getByLabelText(/phone/i);
-        const emailInput = screen.getByLabelText(/email/i);
-        const descriptionTextarea = screen.getByLabelText(/description/i);
+        const nameInput = screen.getByLabelText(/your name/i);
+        const phoneInput = screen.getByLabelText(/your phone/i);
+        const companySelect = screen.getByLabelText(/company/i);
+        const descriptionTextarea = screen.getByLabelText(/description message/i);
 
         fireEvent.change(nameInput, { target: { value: 'John Doe' } });
-        fireEvent.change(phoneInput, { target: { value: '1234567890' } });
-        fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+        fireEvent.change(phoneInput, { target: { value: '0523456789' } });
+        fireEvent.change(companySelect, { target: { value: 'vls' } });
         fireEvent.change(descriptionTextarea, { target: { value: 'This is a test description' } });
 
         expect(nameInput.value).toBe('John Doe');
-        expect(phoneInput.value).toBe('1234567890');
-        expect(emailInput.value).toBe('test@example.com');
+        expect(phoneInput.value).toBe('0523456789');
+        expect(companySelect.value).toBe('vls');
         expect(descriptionTextarea.value).toBe('This is a test description');
     });
 
@@ -70,17 +69,18 @@ describe('Contact Component', () => {
         emailjs.send.mockResolvedValue({ text: 'Email successfully sent' });
 
         renderWithRouter(<Contact />);
-        const nameInput = screen.getByLabelText(/name/i);
-        const phoneInput = screen.getByLabelText(/phone/i);
-        const emailInput = screen.getByLabelText(/email/i);
-        const descriptionTextarea = screen.getByLabelText(/description/i);
-        const submitButton = screen.getByRole('button', { name: /send email/i });
+        const nameInput = screen.getByLabelText(/your name/i);
+        const phoneInput = screen.getByLabelText(/your phone/i);
+        const companySelect = screen.getByLabelText(/company/i);
+        const descriptionTextarea = screen.getByLabelText(/description message/i);
+        const submitButton = screen.getByTestId('button');
 
         fireEvent.change(nameInput, { target: { value: 'John Doe' } });
-        fireEvent.change(phoneInput, { target: { value: '1234567890' } });
-        fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+        fireEvent.change(phoneInput, { target: { value: '0523456789' } });
+        fireEvent.change(companySelect, { target: { value: 'vls' } });
         fireEvent.change(descriptionTextarea, { target: { value: 'This is a test description' } });
         fireEvent.click(submitButton);
+
         await waitFor(() => {
             expect(window.alert).toHaveBeenCalledWith("Email successfully sent. Check your inbox.");
         });
@@ -90,17 +90,16 @@ describe('Contact Component', () => {
         emailjs.send.mockRejectedValue(new Error('Failed to send email'));
 
         renderWithRouter(<Contact />);
-        const nameInput = screen.getByLabelText(/name/i);
-        const phoneInput = screen.getByLabelText(/phone/i);
-        const emailInput = screen.getByLabelText(/email/i);
-        const descriptionTextarea = screen.getByLabelText(/description/i);
-        const submitButton = screen.getByRole('button', { name: /send email/i });
+        const nameInput = screen.getByLabelText(/your name/i);
+        const phoneInput = screen.getByLabelText(/your phone/i);
+        const companySelect = screen.getByLabelText(/company/i);
+        const descriptionTextarea = screen.getByLabelText(/description message/i);
+        const submitButton = screen.getByTestId('button');
 
         fireEvent.change(nameInput, { target: { value: 'John Doe' } });
-        fireEvent.change(phoneInput, { target: { value: '1234567890' } });
-        fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+        fireEvent.change(phoneInput, { target: { value: '050error' } });
+        fireEvent.change(companySelect, { target: { value: 'vls' } });
         fireEvent.change(descriptionTextarea, { target: { value: 'This is a test description' } });
-
         fireEvent.click(submitButton);
 
         await waitFor(() => {
