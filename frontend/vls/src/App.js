@@ -9,6 +9,7 @@ import Contact from "./pages/Admin/Contact";
 import Customers from "./pages/Admin/Customers";
 import EditCustomer from "./pages/Admin/EditCustomer";
 import Analytics from "./pages/Admin/Analytics";
+import EditProceses from "./pages/Admin/EditProceses";
 import HomeC from "./pages/Company/HomeC";
 import NewProcess from "./pages/Company/NewProcess";
 import ContactC from "./pages/Company/ContactC";
@@ -50,10 +51,12 @@ function App() {
           <Route path="/contactCompany" element={<ContactC />} />
           <Route path="/customersCompany" element={<Customersc />} />
           <Route path="/analyticsCompany" element={<AnalyticsC />} />
+          <Route path="/EditProceses" element={<EditProceses />} />
+
         </Routes>
       </Router>
     </div>
   );
 }
 
-export default App;
+export default App;
