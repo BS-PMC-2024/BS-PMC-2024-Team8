@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   frontend:
@@ -12,9 +12,3 @@ services:
     image: jonyc97/backend-vls:latest
     ports:
       - "6500:6500"
-  tests:
-    image: jonyc97/vls:latest
-    depends_on:
-      - frontend
-      - backend
-    command: ["sh", "-c", "npm run test"] # Adjust this command to run your tests
