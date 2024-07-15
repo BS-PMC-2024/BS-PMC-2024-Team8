@@ -50,9 +50,6 @@ function Contact() {
   useEffect(() => {
     setSelectedCompany(selectedCompany);
     setUserEmail(userEmail);
-    console.log("in use effect ")
-    console.log(selectedCompany)
-    console.log(userEmail)
   }, [selectedCompany]);
 
   useEffect(() => {
@@ -99,8 +96,7 @@ function Contact() {
     if (!phoneRegex.test(phone)) {
       return;
     }
-    console.log(userEmail);
-    if(userEmail == "N") // selected None.
+    if(userEmail == "N") 
     {
       setEmailError("Please chose a company you want to send Email to")
       return;
