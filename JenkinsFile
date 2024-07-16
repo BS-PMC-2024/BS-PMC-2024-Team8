@@ -13,7 +13,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'vls-project-tm8', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
+                timeout(time: 15, unit: 'MINUTES') {
+                    cleanWs()
+                    git credentialsId: 'vls-project-tm8', url: 'https://github.com/BS-PMC-2024/BS-PMC-2024-Team8.git'
+                }
             }
         }
 
