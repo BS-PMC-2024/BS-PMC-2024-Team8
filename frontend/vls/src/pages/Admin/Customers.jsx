@@ -106,7 +106,6 @@ function CUSTOMERS() {
     );
   };
 
-  
   return (
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
@@ -118,7 +117,6 @@ function CUSTOMERS() {
         <div className="main-title">
           <h3>CUSTOMERS</h3>
         </div>
-        
         <div className="table-container">
           <table className="customers-table">
             <thead>
@@ -140,7 +138,12 @@ function CUSTOMERS() {
                   <td>{user.company}</td>
                   <td>{user.premission}</td>
                   <td>
-                    <button onClick={() => handleEdit(user)}>Edit</button>
+                    <button
+                      data-testid="edit-button"
+                      onClick={() => handleEdit(user)}
+                    >
+                      Edit
+                    </button>
                     <button
                       className="delete"
                       onClick={() => handleDelete(user.email)}

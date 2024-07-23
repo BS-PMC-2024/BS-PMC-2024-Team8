@@ -7,14 +7,16 @@ import Home from "./pages/Admin/Home";
 import Proceses from "./pages/Admin/Proceses";
 import Contact from "./pages/Admin/Contact";
 import Customers from "./pages/Admin/Customers";
-import Analytics from "./pages/Admin/Analytics";
 import EditCustomer from "./pages/Admin/EditCustomer";
+import Analytics from "./pages/Admin/Analytics";
 import EditProceses from "./pages/Admin/EditProceses";
-
-
-
-
-//add import
+import HomeC from "./pages/Company/HomeC";
+import NewProcess from "./pages/Company/NewProcess";
+import ContactC from "./pages/Company/ContactC";
+import Customersc from "./pages/Company/CustomersC";
+import AnalyticsC from "./pages/Company/AnalyticsC";
+import ProcessC from "./pages/Company/ProcessC";
+import Payment from "./pages/Company/Payment";
 
 // Main App component
 function App() {
@@ -39,13 +41,19 @@ function App() {
           <Route path="/" element={<FirstPage />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/homeAdmin" element={<Home />} />
+          <Route path="/homeCompany" element={<HomeC />} />
           <Route path="/processAdmin" element={<Proceses />} />
           <Route path="/contactAdmin" element={<Contact />} />
           <Route path="/customersAdmin" element={<Customers />} />
+          <Route path="/EditCustomer" element={<EditCustomer />} />
           <Route path="/analyticsAdmin" element={<Analytics />} />
-          <Route path="/EditCustomer" element={<EditCustomer />} />
-          <Route path="/EditCustomer" element={<EditCustomer />} />
+          <Route path="/newProcess" element={<NewProcess />} />
+          <Route path="/processCompany" element={<ProcessC />} />
+          <Route path="/contactCompany" element={<ContactC />} />
+          <Route path="/customersCompany" element={<Customersc />} />
+          <Route path="/analyticsCompany" element={<AnalyticsC />} />
           <Route path="/EditProceses" element={<EditProceses />} />
+          <Route path="/Payment" element={<Payment />} />
 
         </Routes>
       </Router>

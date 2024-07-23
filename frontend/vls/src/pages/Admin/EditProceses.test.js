@@ -1,6 +1,6 @@
-// EditCustomer.test.jsx
 import React from "react";
-import { render, waitFor, fireEvent } from "@testing-library/react";
+import { render, waitFor, fireEvent, screen, within } from "@testing-library/react";
+import '@testing-library/jest-dom/extend-expect';
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
@@ -16,20 +16,20 @@ jest.mock("react-router-dom", () => ({
 describe("EditProceses Component", () => {
   let mock, navigate;
  
- 
-  const user = {
+  const process = {
+    _id: "667df09d72b1250e677f0e89",
     cname: "Yes",
     moneyC: "20",
     peopleC: "8",
     peopleR: "4",
     status: "opened",
-    date:"20/05/2024",
-    sector:"insurance"	
+    date: "20/05/2024",
+    sector: "insurance"	
   };
 
   beforeAll(() => {
     mock = new MockAdapter(axios);
-    useLocation.mockReturnValue({ state: { user } });
+    useLocation.mockReturnValue({ state: { process } });
     navigate = jest.fn();
     useNavigate.mockReturnValue(navigate);
   });
@@ -38,71 +38,90 @@ describe("EditProceses Component", () => {
     mock.restore();
   });
 
-  test("initial state is set correctly", () => {
-    const { getByLabelText } = render(
+  test("initial state is set correctly", async () => {
+    render(
       <MemoryRouter>
         <EditProceses />
       </MemoryRouter>
     );
 
-
-    const cname = getByLabelText("Company Name:");
-    const moneyC = getByLabelText("Money Collected:");
-    const peopleC = getByLabelText("People Collected:");
-    const peopleR = getByLabelText("People Remaining:");
-    const status = getByLabelText("Status:");
-    const date = getByLabelText("Date:");
-    const sector = getByLabelText("Sector:");
-
-
-
-    expect(cname.value).toBe(user.cname);
-    expect(moneyC.value).toBe(user.moneyC);
-    expect(peopleC.value).toBe(user.peopleC);
-    expect(peopleR.value).toBe(user.peopleR);
-    expect(status.value).toBe(user.status);
-    expect(date.value).toBe(user.date);
-    expect(sector.value).toBe(user.sector);
-
-
-  });
-
-  test("handleChange updates state correctly", () => {
-    const { getByLabelText } = render(
-      <MemoryRouter>
-        <EditProceses />
-      </MemoryRouter>
-    );
-
-    const fullCompanyName = getByLabelText("Company Name:");
-    fireEvent.change(fullCompanyName, {
-      target: { name: "cname", value: "Updated User" },
+    await waitFor(() => {
+      expect(screen.getByLabelText("Company Name:")).toBeInTheDocument();
     });
 
-    expect(fullCompanyName.value).toBe("Updated User");
+    const cname = screen.getByLabelText("Company Name:");
+    const moneyC = screen.getByLabelText("Money Collected:");
+    const peopleC = screen.getByLabelText("People Collected:");
+    const peopleR = screen.getByLabelText("People Remaining:");
+    const status = screen.getByLabelText("Status:");
+    const date = screen.getByLabelText("Date:");
+    const sector = screen.getByLabelText("Sector:");
+
+    expect(cname.value).toBe(process.cname);
+    expect(moneyC.value).toBe(process.moneyC);
+    expect(peopleC.value).toBe(process.peopleC);
+    expect(peopleR.value).toBe(process.peopleR);
+    expect(status.value).toBe(process.status);
+    expect(date.value).toBe(process.date);
+    expect(sector.value).toBe(process.sector);
+  });
+
+  test("handleChange updates state correctly", async () => {
+    render(
+      <MemoryRouter>
+        <EditProceses />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText("Company Name:")).toBeInTheDocument();
+    });
+
+    const cnameInput = screen.getByLabelText("Company Name:");
+    fireEvent.change(cnameInput, {
+      target: { name: "cname", value: "Updated Company" },
+    });
+
+    expect(cnameInput.value).toBe("Updated Company");
   });
 
   test("handleSave makes a PUT request and navigates on success", async () => {
-    mock.onPut("http://localhost:6500/proceses/667df09d72b1250e677f0e89").reply(200);
+    mock.onPut("http://localhost:6500/Proceses/667df09d72b1250e677f0e89").reply(200);
 
-    const { getByText } = render(
+    render(
       <MemoryRouter>
         <EditProceses />
       </MemoryRouter>
     );
 
-    const saveButton = getByText("Save");
+    await waitFor(() => {
+      expect(screen.getByText("Save")).toBeInTheDocument();
+    });
+
+    const saveButton = screen.getByText("Save");
     fireEvent.click(saveButton);
 
     await waitFor(() => {
       const request = mock.history.put.find(
-        (req) => req.url === "http://localhost:6500/proceses/667df09d72b1250e677f0e89"
+        (req) => req.url === "http://localhost:6500/Proceses/667df09d72b1250e677f0e89"
       );
       expect(request).toBeTruthy();
     });
 
     await waitFor(() => {
       expect(navigate).toHaveBeenCalledWith("/processAdmin");
-    });
-  });
+    });
+  });
+
+  test("renders no process data message when process data is missing", () => {
+    useLocation.mockReturnValue({ state: {} });
+
+    render(
+      <MemoryRouter>
+        <EditProceses />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("No process data found")).toBeInTheDocument();
+  });
 });

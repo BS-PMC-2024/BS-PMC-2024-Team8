@@ -9,6 +9,7 @@ import {
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -46,7 +47,7 @@ function Home() {
           { email }
         );
 
-        if (!response.data.permission == "admin") {
+        if (!response.data.data.premission == "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {

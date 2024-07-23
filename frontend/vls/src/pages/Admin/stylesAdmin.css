@@ -222,8 +222,9 @@ body {
 }
 
 /* Extra Small <= 576px */
+
 @media screen and (max-width: 576px) {
-  .header-left {
+  .hedaer-left {
     display: none;
   }
 }

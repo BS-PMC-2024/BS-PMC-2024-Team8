@@ -10,11 +10,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@emailjs/nodejs": "^4.0.4",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
     "express": "^4.19.2",
     "mongodb": "^6.7.0",
-    "mongoose": "^8.4.1"
+    "mongoose": "^8.4.1",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
+    "wbm": "^1.1.16",
+    "xlsx": "^0.18.5"
   },
   "docker": {
     "dockerfile": "Dockerfile",

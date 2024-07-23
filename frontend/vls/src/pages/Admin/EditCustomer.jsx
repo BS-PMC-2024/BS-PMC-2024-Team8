@@ -5,6 +5,7 @@ import Header from "./componants/Header";
 import Sidebar from "./componants/sideBar";
 import Modal from "./componants/Modal";
 import "./stylesAdmin.css";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const EditCustomer = () => {
   const location = useLocation();
@@ -14,6 +15,7 @@ const EditCustomer = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   useEffect(() => {
+    console.log(location.state.user);
     setEditedUser({ ...user });
   }, [user]);
 
@@ -29,13 +31,14 @@ const EditCustomer = () => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:6500/user/${editedUser.email}`, // Use backticks for template literal
+        `http://localhost:6500/user/${editedUser.email}`,
         editedUser
       );
       if (response.status === 200) {
-        alert("User updated successfully");
+        alert("user updated succesfully");
         navigate("/customersAdmin");
       } else {
+        alert("Failed to update user");
         console.error("Failed to update user:", response.data.message);
       }
     } catch (error) {
@@ -74,6 +77,7 @@ const EditCustomer = () => {
                 name="country"
                 value={editedUser.country}
                 onChange={handleChange}
+                style={{ marginRight: "10px" }}
               />
             </label>
             <label>
@@ -85,15 +89,23 @@ const EditCustomer = () => {
                 onChange={handleChange}
               />
             </label>
-            <label>
-              Permission:
-              <input
-                type="text"
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="permission-label">Permission</InputLabel>
+              <Select
+                labelId="permission-label"
                 name="permission"
-                value={editedUser.permission}
+                value={editedUser.premission}
                 onChange={handleChange}
-              />
-            </label>
+                label="Permission"
+                style={{
+                  background: "#9e9ea4",
+                  marginLeft: "14px",
+                }}
+              >
+                <MenuItem value="company">Company</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
             <div className="button-group">
               <button type="button" onClick={handleSave}>
                 Save
