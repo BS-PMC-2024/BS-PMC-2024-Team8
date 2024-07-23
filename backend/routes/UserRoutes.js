@@ -1,6 +1,8 @@
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
+const People = require('../models/People');
+const Process = require('../models/Process');
 
 router.get('/allusers', async (req, res) => {
     try {
@@ -12,15 +14,17 @@ router.get('/allusers', async (req, res) => {
     }
   }
   );
-  router.get('/allusers/:company', async (req, res) => {
+  router.get('/clients/:company', async (req, res) => {
+    const company = req.params.company;
     try {
-      const users = await User.find();
-      filteredUsers = users.filter(user => user.company === req.params.company);
-      res.status(200).json({ success: true, users });
+      const processes = await Process.find({ cname: company });
+      const files = processes.map(p => p.file); 
+      const clients = await People.find({ file: { $in: files } });
+      res.status(200).json({ success: true, clients });
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching clients:', error);
       res.status(500).json({ success: false, message: 'Server error' });
     }
   });
-
+  
   module.exports = router;

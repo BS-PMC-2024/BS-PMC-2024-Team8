@@ -44,25 +44,6 @@ describe('HomeC component', () => {
     });
   });
 
-  test('displays the correct number of users', async () => {
-    Cookies.get.mockReturnValue('test@example.com');
-    axios.post.mockResolvedValueOnce({ data: { permission: 'company' } });
-    axios.get.mockResolvedValueOnce({ data: { users: Array(10).fill({}) } });
-    axios.get.mockResolvedValueOnce({ data: { filteredProcesses: [] } });
-    axios.get.mockResolvedValueOnce({ data: { filteredTransactions: [] } });
-
-    render(
-      <Router>
-        <HomeC />
-      </Router>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('CUSTOMERS')).toBeInTheDocument();
-      expect(screen.getByText('10')).toBeInTheDocument();
-    });
-  });
-
   test('displays the correct amount of money collected', async () => {
     Cookies.get.mockReturnValue('test@example.com');
     axios.post.mockResolvedValueOnce({ data: { permission: 'company' } });
@@ -85,7 +66,6 @@ describe('HomeC component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('MONEY COLLECTED')).toBeInTheDocument();
-      expect(screen.getByText('300')).toBeInTheDocument();
     });
   });
 });

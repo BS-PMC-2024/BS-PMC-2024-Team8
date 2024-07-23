@@ -7,7 +7,11 @@ const processSchema = new mongoose.Schema({
   moneyC: String,
   peopleC: String,
   peopleR: String,
-  date: String
+  date: String,
+  discount: String,
+  communication: Object,
+  strategy: String,
+  sector: String,
 });
 
 const Process = mongoose.model('Process', processSchema, 'processes');

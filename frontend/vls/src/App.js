@@ -16,6 +16,7 @@ import ContactC from "./pages/Company/ContactC";
 import Customersc from "./pages/Company/CustomersC";
 import AnalyticsC from "./pages/Company/AnalyticsC";
 import ProcessC from "./pages/Company/ProcessC";
+import Payment from "./pages/Company/Payment";
 
 // Main App component
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="/customersCompany" element={<Customersc />} />
           <Route path="/analyticsCompany" element={<AnalyticsC />} />
           <Route path="/EditProceses" element={<EditProceses />} />
+          <Route path="/Payment" element={<Payment />} />
 
         </Routes>
       </Router>

@@ -1,16 +1,38 @@
 const mongoose = require('mongoose');
+const { encrypt, decrypt } = require('../scripts/encryption');
 
 const transactionSchema = new mongoose.Schema({
-  first_name: String,
-  last_name: String,
+  name: String,
+  id: String,
   age: String,
   city: String,
   pid: String,
   cname: String,
-  left: String,
-  amount: String,
+  debt: String,
+  phone: String,
   discount: String,
-  via: String
+  via: String,
+  card_number: 
+  {
+    type: String,
+    get: decrypt,
+    set: encrypt
+  },
+  expiry_date: 
+  {
+    type: String,
+    get: decrypt,
+    set: encrypt
+  },
+  cvv:
+  {
+    type: String,
+    get: decrypt,
+    set: encrypt
+  },
+  date: String,
+  amountPayments: String,
+  file:  mongoose.Schema.Types.ObjectId,
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema, 'transactions');

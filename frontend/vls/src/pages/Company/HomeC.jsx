@@ -10,12 +10,12 @@ import Sidebar from '../Admin/componants/sideBar'
 
 function HomeC() {
   const navigate = useNavigate();
-  const [Usersnumber, setUsersnumber] = useState(0);
   const [ProcessesnumberO, setProcessesnumberO] = useState(0);
   const [ProcessesnumberC, setProcessesnumberC] = useState(0);
   const [MoneyCollected, setMoneyCollected] = useState(0);
   const [bestDiscount, setBestDiscount] = useState([]);
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
+  const [ClientNumber, setClientNumber] = useState(0);
   useEffect(() => {
     const checkAdminPermission = async () => {
       const email = Cookies.get('email');
@@ -36,19 +36,6 @@ function HomeC() {
     };
     checkAdminPermission();
   }, [navigate]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const company = Cookies.get('company');
-        const response = await axios.get(`http://localhost:6500/allusers/${company}`);
-        setUsersnumber(response.data.users.length);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-    fetchUsers();
-  }, []);
 
   useEffect(() => {
     const fetchProcesses = async () => {
@@ -128,6 +115,19 @@ function HomeC() {
     fetchTransactions();
   }, []);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const company = Cookies.get('company');
+        const response = await axios.get(`http://localhost:6500/clients/${company}`);
+        const clients = response.data.clients;
+        setClientNumber(clients.length);
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    };
+    fetchClients();
+  },[]);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
@@ -157,12 +157,12 @@ function HomeC() {
             </div>
             <h1>{ProcessesnumberC}</h1>
           </div>
-          <div className='card'>
-            <div className='card-inner'>
-              <h3>CUSTOMERS</h3>
-              <BsPeopleFill className='card_icon' />
+          <div className="card">
+            <div className="card-inner">
+              <h3>CLIENTS</h3>
+              <BsPeopleFill className="card_icon" />
             </div>
-            <h1>{Usersnumber}</h1>
+            <h1>{ClientNumber}</h1>
           </div>
           <div className='card'>
             <div className='card-inner'>
