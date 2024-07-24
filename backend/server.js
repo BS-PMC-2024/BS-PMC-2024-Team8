@@ -16,10 +16,10 @@ mongoose.connect('mongodb+srv://ahkcht981:Ahkcht98@bstorec.5l8i8lk.mongodb.net/n
 .catch(err => console.error('Error connecting to MongoDB:', err));
 
 // Import routes
-const userRoutes = require('./routes/userRoutes');
-const processRoutes = require('./routes/processRoutes');
-const transactionRoutes = require('./routes/transactionRoutes');
-const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/UserRoutes');
+const processRoutes = require('./routes/ProcessRoutes');
+const transactionRoutes = require('./routes/TransactionRoutes');
+const authRoutes = require('./routes/AuthRoutes');
 
 // Use routes without changing the base URL
 app.use('/', userRoutes);
