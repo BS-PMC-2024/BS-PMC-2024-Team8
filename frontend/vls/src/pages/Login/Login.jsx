@@ -48,6 +48,7 @@ function Login(props) {
         email,
         password,
       });
+      console.log(response.data.data);
       if (response.data.data.premission) {
         if (!getCookie(email)) {
           setCookie("email", email, 30);

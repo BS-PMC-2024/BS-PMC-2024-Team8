@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
   // Handle user registration request
 router.post('/register', async (req, res) => {
     const userData = req.body;
-    userData.premission = "Company";
+    userData.premission = "company";
   
     try {
       const newUser = new User(userData);

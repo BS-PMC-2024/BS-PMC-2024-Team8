@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 // Register component to display the registration form
 function Register() {
   const [state, setState] = React.useState({
@@ -8,10 +10,12 @@ function Register() {
     password: "",
     country: "",
     company: "",
+    sector: ""
   });
   // Handel changes on the inputs
   const handleChange = (evt) => {
     const { name, value } = evt.target;
+    console.log(evt.target);
     setState({
       ...state,
       [name]: value
@@ -47,7 +51,8 @@ function Register() {
         email: state.email,
         password: state.password,
         country: state.country,
-        company: state.company
+        company: state.company,
+        sector: state.sector
       });
       setState({
         name: "",
@@ -55,6 +60,7 @@ function Register() {
         password: "",
         country: "",
         company: "",
+        sector: ""
       });
       alert("User created successfully");
     } catch (error) {
@@ -101,6 +107,23 @@ function Register() {
           onChange={handleChange}
           placeholder="Company"
         />
+        <FormControl fullWidth style={{marginBottom:'10px',marginTop:'10px'}}>
+          <InputLabel style = {{color:'white'}}id="sector-select-label">Sector</InputLabel>
+          <Select
+            labelId="sector-select-label"
+            id="sector-select"
+            value={state.sector}
+            label="Sector"
+            name="sector"
+            onChange={handleChange}
+          >
+            <MenuItem value="Telecom">Telecom</MenuItem>
+            <MenuItem value="Insurance">Insurance</MenuItem>
+            <MenuItem value="Tech">Tech</MenuItem>
+            <MenuItem value="Health">Health</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </Select>
+        </FormControl>
         <button type="submit">Sign Up</button>
       </form>
     </div>
