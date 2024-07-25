@@ -4,6 +4,7 @@ module.exports = {
   moduleNameMapper: {
     "\\.(css|less)$": "identity-obj-proxy",
     "\\.(png|jpg|jpeg|svg)$": "<rootDir>/fileMock.js",
+    '\\.(mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/fileMock.js'
   },
   transform: {
     "^.+\\.(js|jsx)$": "babel-jest",
@@ -18,6 +19,4 @@ module.exports = {
   transformIgnorePatterns: [
     "node_modules/(?!(axios)/)", // Add this line to ensure axios is transformed
   ],
-  testRunner: "jest-circus/runner", // Specify the test runner
-  silent: true, // Suppress printing of ignored nodes
 };
