@@ -18,7 +18,6 @@ import EditCustomerC from "./pages/Company/EditCustomerC";
 import AnalyticsC from "./pages/Company/AnalyticsC";
 import ProcessC from "./pages/Company/ProcessC";
 import Payment from "./pages/Company/Payment";
-
 // Main App component
 function App() {
   useEffect(() => {

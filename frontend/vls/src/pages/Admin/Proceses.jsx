@@ -148,10 +148,10 @@ function Proceses() {
           <table className="customers-table">
             <thead>
               <tr>
-                <th>cname</th>
-                <th>moneyC</th>
-                <th>peopleC</th>
-                <th>peopleR</th>
+              <th>Company Name</th>
+                <th>Money Collected</th>
+                <th>People Collected</th>
+                <th>People Remaining</th>
                 <th>status</th>
                 <th>date</th>
                 <th>sector</th>
