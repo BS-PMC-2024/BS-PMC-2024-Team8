@@ -21,9 +21,10 @@ jest.mock('@emailjs/browser', () => ({
 beforeEach(() => {
   jest.clearAllMocks();
 
-  axios.get.mockResolvedValueOnce({ data: { users: [{ company: 'vls', email: 'vls' }, { company: 'otherCompany', email: 'otherEmail' }] } });
-  Cookies.get.mockReturnValue('test@example.com');
-  axios.post.mockResolvedValueOnce({ data: { permission: 'admin' } });
+  axios.get.mockResolvedValueOnce({ data: { users: [{ company: 'vls', email: 'ahkcht98@gmail.com' }, { company: 'otherCompany', email: 'otherEmail' }] } });
+  Cookies.get.mockReturnValue('ahkcht98@gmail.com');
+  //axios.post.mockResolvedValueOnce({ data: { permission: 'admin' } });
+  axios.post.mockResolvedValueOnce({ data: { data: { premission: 'admin' } } });
   axios.get.mockResolvedValueOnce({ data: { data: { full_name: 'Test User' } } });
 
   emailjs.init.mockReturnValueOnce();

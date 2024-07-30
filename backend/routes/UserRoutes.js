@@ -3,6 +3,7 @@ const User = require('../models/User');
 const router = express.Router();
 const People = require('../models/People');
 const Process = require('../models/Process');
+const { Admin } = require('mongodb');
 
 router.get('/allusers', async (req, res) => {
     try {
@@ -12,8 +13,19 @@ router.get('/allusers', async (req, res) => {
       console.error('Error fetching users:', error);
       res.status(500).json({ success: false, message: 'Server error' });
     }
-  }
-  );
+  });
+
+  router.get('/allusers/Admin', async (req, res) => {
+    try {
+      const admin = await User.find({premission : 'admin'});
+      res.status(200).json({ success: true, admin });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+
+
   router.get('/clients/:company', async (req, res) => {
     const company = req.params.company;
     try {

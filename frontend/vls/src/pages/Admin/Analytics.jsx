@@ -37,6 +37,8 @@ const Analytics = () => {
   const [bestVia, setBestVia] = useState([]);
   const [bestDiscount, setBestDiscount] = useState([]);
 
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
+
   const openSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
@@ -51,7 +53,7 @@ const Analytics = () => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [refreshTrigger]);
 
   useEffect(() => {
     const fetchProcesses = async () => {
@@ -147,7 +149,7 @@ const Analytics = () => {
       }
     };
     fetchProcesses();
-  }, []);
+  }, [refreshTrigger]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -234,6 +236,17 @@ const Analytics = () => {
       }
     };
     fetchTransactions();
+  }, [refreshTrigger]);
+
+  useEffect(() => {
+    // Set up interval for periodic data fetching
+    const intervalId = setInterval(() => {
+      setRefreshTrigger(prev => !prev); // Toggle state to trigger useEffect
+      console.log(refreshTrigger);
+    }, 60000); // 60,000 ms = 1 minute
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF6347', '#7CFC00', '#FFD700'];
@@ -383,27 +396,38 @@ const Analytics = () => {
             </ResponsiveContainer>
           </div>
           <div>
-            <h3 style={{ textAlign: 'center' }}>Top Communication Apps</h3>
+          <h3 style={{ textAlign: 'center' }}>Communication Apps</h3>
             <ResponsiveContainer width='100%' height={400}>
-              <BarChart
-                width={500}
-                height={300}
-                data={bestVia}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-                barSize={20}
-              >
-                <XAxis dataKey='name' scale='point' padding={{ left: 10, right: 10 }} />
-                <YAxis />
+              <PieChart>
+                <Pie
+                  data={bestVia}
+                  dataKey='value'
+                  nameKey='name'
+                  cx='50%'
+                  cy='50%'
+                  outerRadius='80%'
+                  fill='#8884d8'
+                  label
+                >
+                  {bestVia.map((entry, index) => {
+                    // Determine color based on the name of the communication app
+                    const { name } = entry;
+                    let fillColor;
+                    
+                    if (name.toLowerCase() === 'email') {
+                      fillColor = '#FF6F61'; // Red/Orange color
+                    } else if (name.toLowerCase() === 'whatsapp') {
+                      fillColor = '#25D366'; // WhatsApp green color
+                    } else {
+                      fillColor = COLORS[index % COLORS.length]; // Fallback color
+                    }
+
+                    return <Cell key={`cell-${index}`} fill={fillColor} />;
+                  })}
+                </Pie>
                 <Tooltip />
                 <Legend />
-                <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='value' fill='#795458' background={{ fill: '#eee' }} />
-              </BarChart>
+              </PieChart>
             </ResponsiveContainer>
           </div>
           <div>
