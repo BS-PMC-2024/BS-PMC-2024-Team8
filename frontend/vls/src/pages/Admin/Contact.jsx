@@ -161,7 +161,7 @@ function Contact() {
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
       <main className='main-container' style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <form onSubmit={handleSubmit} style={{ background: '#263043', borderRadius: '0.5%', borderColor: 'rgba(5,66,123,255)', padding: '20px',  maxWidth: '100%', width: '80%', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit} style={{ background: '#263043', borderRadius: '0.5%', borderColor: 'rgba(5,66,123,255)', padding: '50px',  maxWidth: '100%', width: '80%',height: '90%',  margin: '0 auto' }}>
           <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
             <TextField
               label="Your Name"
@@ -235,7 +235,7 @@ function Contact() {
               error={!!emailError}
               rows={10}  // Adjust the number of rows as needed
               InputProps={{
-                style: { minHeight: '250px',width:'500px' }  // Set a minimum height for the input
+                style: { minHeight: '300px',width:'550px' }  // Set a minimum height for the input
               }}
               InputLabelProps={{
                 style: { fontWeight: 'bold', color: '#9e9ea4' }  // Adjust label styles as needed

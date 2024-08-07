@@ -1,15 +1,26 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import Analytics from './Analytics';
+import Analytics from '../Company/AnalyticsC';
 import { BrowserRouter as Router } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 // Mock axios
 jest.mock('axios');
 
+// Mock Cookies
+jest.mock('js-cookie', () => ({
+    get: jest.fn().mockReturnValue('012'),  // Mock the cookie value
+  }));
+
+  const companyID = '012';
 describe('Analytics Component', () => {
   beforeEach(() => {
     axios.get.mockClear();
+    // Set up the mock to return a specific cookie value
+    document.cookie = `company=${companyID}`;
+   
+    axios.post.mockResolvedValueOnce({ data: { data: { premission: 'company' } } });
   });
 
   test('renders without crashing', () => {
@@ -18,7 +29,7 @@ describe('Analytics Component', () => {
         <Analytics />
       </Router>
     );
-    expect(screen.getByText('Top Active Companies')).toBeInTheDocument();
+    expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
   });
 
   test('fetches and displays user count', async () => {
@@ -31,10 +42,10 @@ describe('Analytics Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Top Active Companies')).toBeInTheDocument();
+      expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
     });
 
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/allusers');
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/clients/${companyID}`);
   });
 
   test('fetches and processes data correctly for charts', async () => {
@@ -52,8 +63,8 @@ describe('Analytics Component', () => {
       expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
     });
 
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/allprocesses');
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/alltransactions');
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/allprocesses/${companyID}`);
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/transactions/${companyID}`);
   });
 
   test('renders charts correctly', async () => {
@@ -82,16 +93,14 @@ describe('Analytics Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Top Active Companies')).toBeInTheDocument();
+        expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
+        expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
+        expect(screen.getByText('Monthly Proccess Opened')).toBeInTheDocument();
+        expect(screen.getByText('Top Cities')).toBeInTheDocument();
+        expect(screen.getByText('Ages of the Payers')).toBeInTheDocument();
+        expect(screen.getByText('Communication Apps')).toBeInTheDocument();
+        expect(screen.getByText('Top Discount Plans')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Top Active Companies')).toBeInTheDocument();
-    expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
-    expect(screen.getByText('Sectors of Clients')).toBeInTheDocument();
-    expect(screen.getByText('Monthly Proccess Opened')).toBeInTheDocument();
-    expect(screen.getByText('Top Cities')).toBeInTheDocument();
-    expect(screen.getByText('Ages of the Payers')).toBeInTheDocument();
-    expect(screen.getByText('Communication Apps')).toBeInTheDocument();
-    expect(screen.getByText('Top Discount Plans')).toBeInTheDocument();
   });
 });
