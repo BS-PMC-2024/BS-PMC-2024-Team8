@@ -6,6 +6,7 @@ import {
   BsGraphUp,
   BsPeopleFill,
   BsEnvelopeFill,
+  BsPersonBoundingBox
 } from "react-icons/bs";
 import logo from "../../Login/assets/logo.png";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +49,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             { path: "/processAdmin", icon: BsXDiamondFill, label: "Process" },
             { path: "/analyticsAdmin", icon: BsGraphUp, label: "Analytics" },
             { path: "/customersAdmin", icon: BsPeopleFill, label: "Customers" },
+            { path: "/Clients", icon: BsPersonBoundingBox, label: "Clients" },
             { path: "/contactAdmin", icon: BsEnvelopeFill, label: "Contact" },
           ]);
         }
