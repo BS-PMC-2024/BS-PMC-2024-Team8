@@ -8,12 +8,14 @@ import {
   BsEnvelopeFill,
 } from "react-icons/bs";
 import logo from "../../Login/assets/logo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
+
 
   useEffect(() => {
     const fetchPermission = async () => {
@@ -59,12 +61,27 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     fetchPermission();
   }, []);
 
+  const iconColors = {
+    "/homeCompany": "#007bff",
+    "/newProcess": "#D4AF37",
+    "/processCompany": "#dc3545",
+    "/analyticsCompany": "#4CAF50",
+    "/customersCompany": "#17a2b8",
+    "/contactCompany": "#ff6f61",
+    "/homeAdmin": "#007bff",
+    "/processAdmin": "#dc3545",
+    "/analyticsAdmin": "#4CAF50",
+    "/customersAdmin": "#17a2b8",
+    "/contactAdmin": "#ff6f61",
+  };
+
   const [menuItems, setMenuItems] = React.useState([]);
 
   return (
     <aside
       id="sidebar"
       className={openSidebarToggle ? "sidebar-responsive" : ""}
+      
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
@@ -91,18 +108,28 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       </div>
 
       <ul className="sidebar-list">
-        {menuItems.map((item, index) => (
-          <li
-            className="sidebar-list-item"
-            key={index}
-            data-testid={`link-${item.label.toLowerCase()}`}
-          >
-            <a onClick={() => navigate(item.path, { replace: true })}>
-              <item.icon className="icon" /> {item.label}
-            </a>
-          </li>
-        ))}
+        {menuItems.map((item, index) => {
+          const isActive = location.pathname === item.path;
+          const iconColor = iconColors[item.path] || "#white"; // Default to white if no color found
+
+          return (
+            <li
+              className="sidebar-list-item"
+              key={index}
+              data-testid={`link-${item.label.toLowerCase()}`}
+              onClick={() => navigate(item.path, { replace: true })}
+              style={{ cursor: 'pointer', marginLeft:'5px' }}
+            >
+              <item.icon
+                className="icon"
+                style={{ color: isActive ? iconColor : "#white", marginRight: '12px' }} // Apply color based on active state
+              />
+              {item.label}
+            </li>
+          );
+        })}
       </ul>
+
     </aside>
   );
 }

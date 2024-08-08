@@ -100,7 +100,7 @@ function ContactC() {
     } else if (name === "phone") {
       const phoneRegex = /^05[0-9]{8}$/;
       if (!phoneRegex.test(value)) {
-        setPhoneError("Invalid phone number ");
+        setPhoneError("Invalid. enter 10 digit number starting with 05");
       }else{
         setPhoneError('');
       }
@@ -116,7 +116,7 @@ function ContactC() {
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
       <main className='main-container' style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <form onSubmit={handleSubmit} style={{ background: '#263043', borderRadius: '0.5%', borderColor: 'rgba(5,66,123,255)', padding: '20px',   maxWidth: '100%', width: '90%',height: '100%',  margin: '0 auto'}}>
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center', width:'320px' }}>
             <TextField
               label="Your Name"
               variant="outlined"
@@ -129,10 +129,14 @@ function ContactC() {
               InputLabelProps={{ // for the label
                 style: { color: '#9e9ea4', fontWeight: 'bold' } // Adjust color and font weight here
               }}
+              InputProps={{ // Center text inside the input field
+                style: { textAlign: 'center' },
+                inputProps: { style: { textAlign: 'center', fontSize: '20px' } } // Center text inside the input element
+              }}
               sx={{ backgroundColor: '#FFFFFF' }} // style for the material component
             />
           </div>
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center', width:'320px' }}>
             <TextField
               label="Your Phone"
               variant="outlined"
@@ -147,12 +151,16 @@ function ContactC() {
               InputLabelProps={{ // for the label
                 style: { color: '#9e9ea4', fontWeight: 'bold' } // Adjust color and font weight here
               }}
-              sx={{ backgroundColor: '#FFFFFF'}}
+              InputProps={{ // Center text inside the input field
+                style: { textAlign: 'center' },
+                inputProps: { style: { textAlign: 'center', fontSize: '20px' } } // Center text inside the input element
+              }}
+              sx={{ backgroundColor: '#FFFFFF', textAlign:'center'}}
             />
             {phoneError && (<div className="error-message" style={{color: 'red', textAlign: 'center' }}>{phoneError}</div>)}
           </div>
 
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center', width:'320px' }}>
             <TextField
               label="Admin name"
               variant="outlined"
@@ -162,7 +170,9 @@ function ContactC() {
               required
               fullWidth
               InputProps={{
-                readOnly: true // Make the field read-only
+                readOnly: true, // Make the field read-only
+                style: { textAlign: 'center' },
+                inputProps: { style: { textAlign: 'center', fontSize: '20px' } } // Center text inside the input element
               }}
               InputLabelProps={{ // for the label
                 style: { color: '#9e9ea4', fontWeight: 'bold' } // Adjust color and font weight here
@@ -173,7 +183,7 @@ function ContactC() {
 
           <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center'}}>
             <TextField
-              label="Description message"
+              label="Message: "
               variant="outlined"
               id="description"
               name="description"
