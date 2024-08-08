@@ -5,72 +5,22 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./stylesAdmin.css";
 import EditProceses from "./EditProceses";
-import Cookies from "js-cookie";
 
 function Proceses() {
   const navigate = useNavigate();
   const [processes, setProcesses] = useState([]);
   const [filteredProcesses, setFilteredProcesses] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [Cname, setCname] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [Cname, setCname] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [selectedprocesses, setSelectedprocesses] = useState(null);
-
-  useEffect(() => {
-    const checkAdminPermission = async () => {
-      const email = Cookies.get("email");
-
-      if (!email) {
-        navigate("/", { replace: true });
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:6500/check-permission",
-          { email }
-        );
-
-        if (!response.data.data.premission == "admin") {
-          navigate("/", { replace: true });
-        }
-      } catch (error) {
-        console.error("Error checking admin permission:", error);
-        navigate("/", { replace: true });
-      }
-    };
-    checkAdminPermission();
-  }, [navigate]);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
-  useEffect(() => {
-    const checkAdminPermission = async () => {
-      const email = Cookies.get("email");
 
-      if (!email) {
-        navigate("/", { replace: true });
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:6500/check-permission",
-          { email }
-        );
-
-        if (!response.data.data.premission == "admin") {
-          navigate("/", { replace: true });
-        }
-      } catch (error) {
-        console.error("Error checking admin permission:", error);
-        navigate("/", { replace: true });
-      }
-    };
-    checkAdminPermission();
-  }, [navigate]);
-  
   useEffect(() => {
     const fetchProcesses = async () => {
       try {
@@ -85,12 +35,23 @@ function Proceses() {
   }, []);
 
   const handleDelete = async (id) => {
+     // הצגת הודעת אישור למחיקה
+    const confirmed = window.confirm("Are you sure you want to delete this process?");
+    if (!confirmed) {
+      return;
+    }
+
     try {
-      const response = await axios.delete(`http://localhost:6500/deleteprocess/${id}`);
+      const response = await axios.delete(
+        `http://localhost:6500/deleteprocess/${id}`
+      );
       if (response.status === 200) {
         setProcesses(processes.filter((process) => process._id !== id));
-        setFilteredProcesses(filteredProcesses.filter((process) => process._id !== id));
+        setFilteredProcesses(
+          filteredProcesses.filter((process) => process._id !== id)
+        );
         console.log("Process deleted successfully");
+        window.confirm("Process deleted successfully");
       } else {
         console.error("Failed to delete process:", response.data.message);
       }
@@ -98,20 +59,21 @@ function Proceses() {
       console.error("Error deleting process:", error);
     }
   };
-  
 
   const handleEdit = (process) => {
     navigate("/EditProceses", { state: { process } });
   };
-  
 
- 
   const handleSaveProcess = (updatedProcess) => {
     setProcesses(
-      processes.map((process) => (process._id === updatedProcess._id ? updatedProcess : process))
+      processes.map((process) =>
+        process._id === updatedProcess._id ? updatedProcess : process
+      )
     );
     setFilteredProcesses(
-      filteredProcesses.map((process) => (process._id === updatedProcess._id ? updatedProcess : process))
+      filteredProcesses.map((process) =>
+        process._id === updatedProcess._id ? updatedProcess : process
+      )
     );
   };
 
@@ -134,35 +96,42 @@ function Proceses() {
   };
 
   const filterProcesses = (cname, startDate, endDate) => {
-    const filtered = processes.filter(process => {
-      const matchesCname = process.cname.toLowerCase().includes(cname.toLowerCase());
-      
+    const filtered = processes.filter((process) => {
+      const matchesCname = process.cname
+        .toLowerCase()
+        .includes(cname.toLowerCase());
+
       // Convert the date format from DD/MM/YYYY to MM/DD/YYYY
-      const [day, month, year] = process.date.split('/');
+      const [day, month, year] = process.date.split("/");
       const processDate = new Date(`${year}-${month}-${day}`);
-      
-      const matchesDate = (!startDate || processDate >= new Date(startDate)) &&
-                          (!endDate || processDate <= new Date(endDate));
+
+      const matchesDate =
+        (!startDate || processDate >= new Date(startDate)) &&
+        (!endDate || processDate <= new Date(endDate));
       return matchesCname && matchesDate;
     });
     setFilteredProcesses(filtered);
   };
 
-  
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
   const handleSaveUser = (updatedUser) => {
     setProcesses(
-        processes.map((process) => (process._id === updatedUser._id ? updatedUser : process))
+      processes.map((process) =>
+        process._id === updatedUser._id ? updatedUser : process
+      )
     );
   };
 
   return (
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
-      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+      <Sidebar
+        openSidebarToggle={openSidebarToggle}
+        OpenSidebar={OpenSidebar}
+      />
       <main className="main-container">
         <div className="main-title">
           <h3>Processes</h3>
@@ -196,14 +165,14 @@ function Proceses() {
           <table className="customers-table">
             <thead>
               <tr>
-              <th>Company Name</th>
+                <th>Company Name</th>
                 <th>Money Collected</th>
                 <th>People Collected</th>
                 <th>People Remaining</th>
                 <th>status</th>
                 <th>date</th>
                 <th>sector</th>
-                <th>Edit/Delete</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -218,7 +187,10 @@ function Proceses() {
                   <td>{process.sector}</td>
                   <td>
                     <button onClick={() => handleEdit(process)}>Edit</button>
-                    <button className="delete" onClick={() => handleDelete(process._id)}>
+                    <button
+                      className="delete"
+                      onClick={() => handleDelete(process._id)}
+                    >
                       Delete
                     </button>
                   </td>

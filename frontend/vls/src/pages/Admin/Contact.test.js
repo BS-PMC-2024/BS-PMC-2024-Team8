@@ -42,7 +42,7 @@ test('renders the Contact component', async () => {
   expect(screen.getByLabelText(/Your Name/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/Your Phone/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/Company/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/Description message/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/Message/i)).toBeInTheDocument();
   expect(screen.getByTestId('button')).toBeInTheDocument();
 });
 

@@ -77,6 +77,11 @@ function CUSTOMERS() {
   };
 
   const handleDelete = async (email) => {
+    const confirmed = window.confirm("Are you sure you want to delete this process?");
+    if (!confirmed) {
+      return;
+    }
+
     try {
       const response = await axios.delete(
         `http://localhost:6500/deleteuser/${encodeURIComponent(email)}`
@@ -84,6 +89,7 @@ function CUSTOMERS() {
       if (response.status === 200) {
         setUsers(users.filter((user) => user.email !== email));
         console.log("User deleted successfully");
+        window.confirm("User deleted successfully");
       } else {
         console.error("Failed to delete user:", response.data.message);
       }
@@ -126,7 +132,7 @@ function CUSTOMERS() {
                 <th>Country</th>
                 <th>Company</th>
                 <th>Permission</th>
-                <th>Edit/Delete</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
