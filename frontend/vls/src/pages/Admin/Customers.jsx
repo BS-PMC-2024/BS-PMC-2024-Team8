@@ -115,7 +115,7 @@ function CUSTOMERS() {
       />
       <main className="main-container">
         <div className="main-title">
-          <h3>CUSTOMERS</h3>
+          <h3>Customers</h3>
         </div>
         <div className="table-container">
           <table className="customers-table">

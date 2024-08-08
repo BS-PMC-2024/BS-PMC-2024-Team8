@@ -165,7 +165,7 @@ function Proceses() {
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
       <main className="main-container">
         <div className="main-title">
-          <h3>PROCESSES</h3>
+          <h3>Processes</h3>
         </div>
         <div>
           <input

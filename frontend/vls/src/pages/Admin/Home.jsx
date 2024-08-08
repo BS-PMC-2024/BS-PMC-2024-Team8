@@ -207,7 +207,7 @@ function Home() {
                 <Bar
                   dataKey="count"
                   fill="#8884d8"
-                  background={{ fill: "#eee" }}
+                  background={{  fill: "transparent" }}
                 />
               </BarChart>
             </ResponsiveContainer>

@@ -142,7 +142,7 @@ const NewProcess = () => {
         <div className='grid-container'>
           <Header OpenSidebar={OpenSidebar} />
           <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
-          <h1>NewProcess </h1>
+          <h1 style={{fontSize:'22px',marginLeft:'10px'}}>NewProcess </h1>
           <div>
             <Button onClick={handleClickVideo}variant="contained" color="primary" style={{ position: 'absolute', right: '20px', top: '90px' }}>
               Instruction Video

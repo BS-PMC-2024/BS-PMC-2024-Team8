@@ -89,9 +89,9 @@ const Clients = () => {
       />
       <main className="main-container">
         <div className="main-title">
-          <h3>  Clients</h3>
+          <h3 style={{fontSize:'21px'}}>Clients</h3>
         </div>
-        <div className="search-bars" style={{width:'90%',marginLeft:'12px',marginBottom:'15px'}}>
+        <div className="search-bars" style={{width:'85%',marginLeft:'15px',marginBottom:'15px'}}>
           <input
             type="text"
             placeholder="Search by name"

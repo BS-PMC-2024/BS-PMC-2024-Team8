@@ -23,7 +23,7 @@ describe("Proceses Component", () => {
         <Proceses />
       </MemoryRouter>
     );
-    const element = screen.getByText("PROCESSES"); // Adjust the text to match your component
+    const element = screen.getByText("Processes"); // Adjust the text to match your component
     expect(element).toBeInTheDocument();
   });
 
