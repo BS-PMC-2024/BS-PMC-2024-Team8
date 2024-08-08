@@ -71,6 +71,10 @@ const CustomersC = () => {
     navigate("/EditCustomerC", { state: { person } });
   };
 
+  const handleDelete = (person) => {
+    navigate("/DeleteCustomerC", { state: { person } });
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -92,7 +96,7 @@ const CustomersC = () => {
       />
       <main className="main-container">
         <div className="main-title">
-          <h3>PEOPLE</h3>
+          <h3>Debtors</h3>
         </div>
         <div className="table-container">
           <table className="customers-table">
@@ -107,7 +111,7 @@ const CustomersC = () => {
                 <th>Phone</th>
                 <th>Messages</th>
                 <th>Discount</th>
-                <th>Edit</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -128,6 +132,12 @@ const CustomersC = () => {
                       onClick={() => handleEdit(person)}
                     >
                       Edit
+                    </button>
+                    <button
+                      className="delete"
+                      onClick={() => handleDelete(person)}
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>
