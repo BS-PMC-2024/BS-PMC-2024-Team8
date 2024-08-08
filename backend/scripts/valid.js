@@ -1,18 +1,21 @@
 const People = require('../models/People');
 const XLSX = require('xlsx');
+const moment = require('moment');
 
 const expectedHeaders = ['Name', 'Debt', 'Age', 'City', 'Mail', 'Phone', 'Date'];
 
+function reorderHeaders(headers) {
+  const headerMap = new Map(headers.map((header, index) => [header, index]));
+  return expectedHeaders.map(header => headerMap.get(header));
+}
+
+function reorderRow(row, order) {
+  return order.map(index => row[index]);
+}
+
 function isValidHeader(headers) {
-  if (headers.length !== expectedHeaders.length) {
-    return false;
-  }
-  for (let i = 0; i < headers.length; i++) {
-    if (headers[i] !== expectedHeaders[i]) {
-      return false;
-    }
-  }
-  return true;
+  const headerSet = new Set(headers);
+  return expectedHeaders.every(header => headerSet.has(header));
 }
 
 function isValidRow(row) {
@@ -21,11 +24,11 @@ function isValidRow(row) {
     return false;
   }
   if (typeof row['Age'] !== 'number' || row['Age'] <= 0) {
-    console.log('Age'); 
+    console.log('Age');
     return false;
   }
   if (typeof row['City'] !== 'string' || row['City'].trim() === '') {
-    console.log('City');  
+    console.log('City');
     return false;
   }
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,11 +36,11 @@ function isValidRow(row) {
     console.log('Mail');
     return false;
   }
-  if (typeof row['Phone'] !== 'string' || row['Phone'].length !== 10 ||!row['Phone'].startsWith('05')) {
+  if (typeof row['Phone'] !== 'string' || row['Phone'].length !== 10 || !row['Phone'].startsWith('05')) {
     console.log('Phone');
     return false;
   }
-  if (typeof row['Date'] !== 'string' || new Date(row['Date']).toString() === 'Invalid Date') {
+  if (!moment(row['Date'], 'DD/MM/YYYY', true).isValid()) {
     console.log('Date');
     return false;
   }
@@ -45,9 +48,9 @@ function isValidRow(row) {
 }
 
 async function checkForDuplicates(row) {
-  const existingPerson = await People.findOne({ 
-    Name: row['Name'], 
-    Mail: row['Mail'], 
+  const existingPerson = await People.findOne({
+    Name: row['Name'],
+    Mail: row['Mail'],
     Phone: row['Phone']
   }).exec();
   return existingPerson !== null;
@@ -64,14 +67,23 @@ async function validateXlsx(fileBuffer) {
     return { valid: false, message: 'Invalid headers' };
   }
 
-  const rows = XLSX.utils.sheet_to_json(sheet);
-  for (const row of rows) {
-    if (!isValidRow(row)) {
-      return { valid: false, message: 'Invalid row data', row };
+  const headerOrder = reorderHeaders(headers);
+  const rows = data.slice(1).map(row => reorderRow(row, headerOrder));
+
+  for (const rowArray of rows) {
+    const rowObject = Object.fromEntries(expectedHeaders.map((header, index) => [header, rowArray[index]]));
+
+    if (!isValidRow(rowObject)) {
+      return { valid: false, message: 'Invalid row data', row: rowObject };
     }
-    const isDuplicate = await checkForDuplicates(row);
+    
+    if (!moment(rowObject['Date'], 'DD/MM/YYYY', true).isValid()) {
+      rowObject['Date'] = moment(rowObject['Date']).format('DD/MM/YYYY');
+    }
+    
+    const isDuplicate = await checkForDuplicates(rowObject);
     if (isDuplicate) {
-      return { valid: false, message: 'Duplicate entry found', row };
+      return { valid: false, message: 'Duplicate entry found', row: rowObject };
     }
   }
 
