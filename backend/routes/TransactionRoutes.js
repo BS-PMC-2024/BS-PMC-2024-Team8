@@ -1,9 +1,10 @@
-const express = require("express");
-const Transaction = require("../models/Transaction");
-// const { format } = require("date-fns");
-const Process = require("../models/Process");
-
+const express = require('express');
+const Transaction = require('../models/Transaction');
+const { format } = require('date-fns');
+const Process = require('../models/Process');
 const router = express.Router();
+const axios = require('axios');
+const People = require('../models/People');
 
 router.get("/alltransactions", async (req, res) => {
   try {
@@ -27,33 +28,41 @@ router.get("/transactions/:company", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-router.post("/addTransaction"),
-  async (req, res) => {
-    try {
-      const newTransaction = new Transaction(req.body);
-      newTransaction.date = format(new Date(), "dd/MM/yyyy");
-      await newTransaction.save();
-      let process = await Process.find({ file: newTransaction.file }).exec();
-      process.moneyC += newTransaction.debt;
-      process.peopleC += 1;
-      process.peopleR -= 1;
-      if (process.peopleR === 0) {
-        process.status = "closed";
+
+router.post('/addTransaction', async (req, res) => {
+  try {
+    console.log(req.body);
+    const newTransaction = new Transaction(req.body);
+    newTransaction.date = format(new Date(), 'dd/MM/yyyy');
+    await newTransaction.save();
+    
+    let process = await Process.findOne({ file: newTransaction.file });
+    console.log(process);
+    if (process) {
+      process.moneyC = (parseFloat(newTransaction.debt) + parseFloat(process.moneyC)).toString();
+      process.peopleC = (parseInt(process.peopleC) + 1).toString();
+      process.peopleR = (parseInt(process.peopleR) - 1).toString();
+      if (parseInt(process.peopleR) === 0) {
+        process.status = 'closed';
       }
       try {
         const response = await axios.put(
-          `http://localhost:6500/Proceses/${editedProceses._id}`,
+          `http://localhost:6500/Proceses/${process._id}`, 
           process
         );
+        console.log('Process updated:', response.data);
       } catch (error) {
         console.error("Error updating Process:", error);
       }
-
-      res.status(200).json({ success: true });
-    } catch (error) {
-      console.error("Error creating transaction:", error);
-      res.status(500).json({ success: false, message: "Server error" });
+      console.log(newTransaction);
+      await People.findOneAndDelete({ file: newTransaction.file.toString(), Name: newTransaction.name });
     }
-  };
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
 module.exports = router;

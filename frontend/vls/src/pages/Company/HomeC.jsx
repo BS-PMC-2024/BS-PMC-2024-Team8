@@ -17,7 +17,7 @@ function HomeC() {
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
   const [ClientNumber, setClientNumber] = useState(0);
   useEffect(() => {
-    const checkAdminPermission = async () => {
+    const checkCompanyPermission = async () => {
       const email = Cookies.get('email');
 
       if (!email) {
@@ -34,7 +34,7 @@ function HomeC() {
         navigate('/', { replace: true });
       }
     };
-    checkAdminPermission();
+    checkCompanyPermission();
   }, [navigate]);
 
   useEffect(() => {

@@ -1,11 +1,12 @@
 const express = require("express");
 const User = require("../models/User");
 const router = express.Router();
-const People = require("../models/People");
-const Process = require("../models/Process");
-const Person = require("../models/People");
+const People = require('../models/People');
+const Process = require('../models/Process');
 const { Admin } = require('mongodb');
 
+//validate boy by ajv
+//split it to controller
 router.get("/allusers", async (req, res) => {
   try {
     const users = await User.find();
