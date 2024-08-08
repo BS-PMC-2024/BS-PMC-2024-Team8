@@ -4,7 +4,7 @@ import Sidebar from "./componants/sideBar";
 import axios from "axios";
 import Modal from "./componants/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import Cookies from "js-cookie";
 import "./stylesAdmin.css";
 
 const EditProceses = () => {
@@ -14,7 +14,26 @@ const EditProceses = () => {
   const [editedProceses, setEditedProceses] = useState({ ...process });
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [errors, setErrors] = useState({});
+  useEffect(async () => {
+      if (!email) {
+        navigate("/", { replace: true });
+        return;
+      }
+      try {
+        const response = await axios.post(
+          "http://localhost:6500/check-permission",
+          { email }
+        );
 
+        if (!response.data.data.premission == "admin") {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error checking admin permission:", error);
+        navigate("/", { replace: true });
+      }
+    checkAdminPermission();
+  }, [navigate]);
   useEffect(() => {
     if (process) {
       setEditedProceses({ ...process });

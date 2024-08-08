@@ -33,7 +33,7 @@ function isValidRow(row) {
     console.log('Mail');
     return false;
   }
-  if (typeof row['Phone'] !== 'string' || row['Phone'].length !== 10) {
+  if (typeof row['Phone'] !== 'string' || row['Phone'].length !== 10 ||!row['Phone'].startsWith('05')) {
     console.log('Phone');
     return false;
   }

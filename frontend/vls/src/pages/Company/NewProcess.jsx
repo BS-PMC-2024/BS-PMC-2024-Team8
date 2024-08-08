@@ -13,7 +13,7 @@ const NewProcess = () => {
   const [discount, setDiscount] = useState('10%');
   const [communication, setCommunication] = useState({
     email: false,
-    whatsapp: false
+    sms: false
   });
   const [strategy, setStrategy] = useState('');
   const [videoVisible, setVideoVisible] = useState(false);
@@ -22,7 +22,7 @@ const NewProcess = () => {
   const [sector, setSector] = useState(null);
   const  navigate  = useNavigate();
   useEffect(() => {
-    const checkAdminPermission = async () => {
+    const checkCompanyPermission = async () => {
       const email = Cookies.get('email');
 
       if (!email) {
@@ -44,7 +44,7 @@ const NewProcess = () => {
         navigate('/', { replace: true });
       }
     };
-    checkAdminPermission();
+    checkCompanyPermission();
   }, [navigate]);
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
@@ -85,7 +85,7 @@ const NewProcess = () => {
     if (!strategy) {
       alert('Please select a strategy');
     }
-    if (!communication.email && !communication.whatsapp) 
+    if (!communication.email && !communication.sms) 
       {
         alert('Please select a communication');
         return;
@@ -115,7 +115,7 @@ const NewProcess = () => {
         setDiscount('10%');
         setCommunication({
           email: false,
-          whatsapp: false
+          sms: false
         });
         setStrategy('');
       } 
@@ -213,12 +213,12 @@ const NewProcess = () => {
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={communication.whatsapp}
+                          checked={communication.sms}
                           onChange={handleCommunicationChange}
-                          name="whatsapp"
+                          name="sms"
                         />
                       }
-                      label="WhatsApp"
+                      label="SMS"
                     />
                   </FormControl>
                 </div>
