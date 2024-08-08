@@ -132,10 +132,18 @@ const EditCustomer = () => {
               </Select>
             </FormControl>
             <div className="button-group">
-              <button type="button" onClick={handleSave}>
+              <button
+                className="button save-button"
+                type="button"
+                onClick={handleSave}
+              >
                 Save
               </button>
-              <button type="button" onClick={handleCancel}>
+              <button
+                className="button cancel-button"
+                type="button"
+                onClick={handleCancel}
+              >
                 Cancel
               </button>
             </div>

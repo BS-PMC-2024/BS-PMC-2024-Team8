@@ -132,7 +132,7 @@ function CUSTOMERS() {
                 <th>Country</th>
                 <th>Company</th>
                 <th>Permission</th>
-                <th>Edit/Delete</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
