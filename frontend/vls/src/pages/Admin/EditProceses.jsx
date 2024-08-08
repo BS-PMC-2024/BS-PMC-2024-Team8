@@ -35,45 +35,51 @@ const EditProceses = () => {
     if (!datePattern.test(date)) {
       return false;
     }
-  
+
     const [_, day, month, year] = date.match(datePattern);
     const dayNum = parseInt(day, 10);
     const monthNum = parseInt(month, 10);
     const yearNum = parseInt(year, 10);
-  
+
     if (dayNum < 1 || dayNum > 31 || monthNum < 1 || monthNum > 12) {
       return false;
     }
-  
+
     if ([4, 6, 9, 11].includes(monthNum) && dayNum > 30) {
       return false;
     }
-  
+
     if (monthNum === 2) {
-      const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || (yearNum % 400 === 0);
+      const isLeapYear =
+        (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0;
       if (dayNum > (isLeapYear ? 29 : 28)) {
         return false;
       }
     }
-  
+
     return true;
   };
 
   const validateForm = () => {
-    const { cname, moneyC, peopleC, peopleR, status, date, sector } = editedProceses;
+    const { cname, moneyC, peopleC, peopleR, status, date, sector } =
+      editedProceses;
     const errors = {};
 
     if (!cname) errors.cname = "Company Name is required.";
-    if (!moneyC || isNaN(moneyC)) errors.moneyC = "Money Collected must be a valid number.";
-    if (!peopleC || isNaN(peopleC)) errors.peopleC = "People Collected must be a valid number.";
-    if (!peopleR || isNaN(peopleR)) errors.peopleR = "People Remaining must be a valid number.";
+    if (!moneyC || isNaN(moneyC))
+      errors.moneyC = "Money Collected must be a valid number.";
+    if (!peopleC || isNaN(peopleC))
+      errors.peopleC = "People Collected must be a valid number.";
+    if (!peopleR || isNaN(peopleR))
+      errors.peopleR = "People Remaining must be a valid number.";
     if (!status) errors.status = "Status is required.";
     if (!sector) errors.sector = "Sector is required.";
 
     if (!date) {
       errors.date = "Date is required.";
     } else if (!validateDate(date)) {
-      errors.date = "Invalid date format. Please enter a valid date in the format dd/mm/yyyy.";
+      errors.date =
+        "Invalid date format. Please enter a valid date in the format dd/mm/yyyy.";
     }
 
     return errors;
@@ -114,7 +120,10 @@ const EditProceses = () => {
   return (
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
-      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+      <Sidebar
+        openSidebarToggle={openSidebarToggle}
+        OpenSidebar={OpenSidebar}
+      />
       <main className="main-container">
         <Modal>
           <h2>Edit Process </h2>
@@ -153,7 +162,9 @@ const EditProceses = () => {
                   onChange={handleChange}
                 />
               </label>
-              {errors.peopleC && <span className="error">{errors.peopleC}</span>}
+              {errors.peopleC && (
+                <span className="error">{errors.peopleC}</span>
+              )}
             </div>
             <div className="form-row">
               <label>
@@ -165,7 +176,9 @@ const EditProceses = () => {
                   onChange={handleChange}
                 />
               </label>
-              {errors.peopleR && <span className="error">{errors.peopleR}</span>}
+              {errors.peopleR && (
+                <span className="error">{errors.peopleR}</span>
+              )}
             </div>
             <div className="form-row">
               <label>
@@ -204,10 +217,18 @@ const EditProceses = () => {
               {errors.sector && <span className="error">{errors.sector}</span>}
             </div>
             <div className="button-group">
-              <button type="button" onClick={handleSave}>
+              <button
+                className="button save-button"
+                type="button"
+                onClick={handleSave}
+              >
                 Save
               </button>
-              <button type="button" onClick={handleCancel}>
+              <button
+                className="button cancel-button"
+                type="button"
+                onClick={handleCancel}
+              >
                 Cancel
               </button>
             </div>

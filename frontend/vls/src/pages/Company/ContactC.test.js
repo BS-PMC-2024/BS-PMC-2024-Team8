@@ -22,7 +22,7 @@ beforeEach(() => {
 
   // Mock the axios responses
   axios.get.mockResolvedValueOnce({ data: { data: { company: 'vls' } } });
-  axios.get.mockResolvedValueOnce({ data: { admin: [{ full_name: 'Test User', email: 'test@example.com' }] } });
+  axios.get.mockResolvedValueOnce({ data: { admin: [{ full_name: 'Test User', email: 'ahkcht98@gmail.com' }] } });
   axios.post.mockResolvedValueOnce({ data: { data: { premission: 'company' } } });
 
   // Mock the Cookies.get to return a specific email
@@ -47,7 +47,7 @@ test('renders the Contact component', async () => {
   expect(screen.getByLabelText(/Your Name/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/Your Phone/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/Admin name/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/Description message/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/Message/i)).toBeInTheDocument();
   expect(screen.getByTestId('button')).toBeInTheDocument();
 });
 
@@ -61,7 +61,7 @@ test('submits form and sends email', async () => {
   // Fill out the form
   fireEvent.change(screen.getByLabelText(/Your Name/i), { target: { value: 'Test Company' } });
   fireEvent.change(screen.getByLabelText(/Your Phone/i), { target: { value: '0501234567' } });
-  fireEvent.change(screen.getByLabelText(/Description message/i), { target: { value: 'Test description' } });
+  fireEvent.change(screen.getByLabelText(/Message/i), { target: { value: 'Test description' } });
 
   // Submit the form
   fireEvent.click(screen.getByTestId('button'));

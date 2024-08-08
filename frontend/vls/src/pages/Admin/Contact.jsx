@@ -96,7 +96,7 @@ function Contact() {
     if (!phoneRegex.test(phone)) {
       return;
     }
-    if(userEmail == "N") 
+    if(userEmail === "N") 
     {
       setEmailError("Please chose a company you want to send Email to")
       return;
@@ -129,7 +129,7 @@ function Contact() {
     } else if (name === "phone") {
       const phoneRegex = /^05[0-9]{8}$/;
       if (!phoneRegex.test(value)) {
-        setPhoneError("Invalid phone number ");
+        setPhoneError("Invalid. enter 10 digit number starting with 05");
       }else{
         setPhoneError('');
       }
@@ -148,8 +148,8 @@ function Contact() {
     setSelectedCompany(value);
     setUserEmail(cnames[value][0]);
 
-    if(value != "None"){ setEmailError("");}
-    else{setEmailError("Please chose a company you want to send Email to");}
+    if(value !== "None"){ setEmailError("");}
+    else{setEmailError("Please choose a company you want to send Email to");}
   };
 
   useEffect(() => {
@@ -162,7 +162,7 @@ function Contact() {
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
       <main className='main-container' style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <form onSubmit={handleSubmit} style={{ background: '#263043', borderRadius: '0.5%', borderColor: 'rgba(5,66,123,255)', padding: '50px',  maxWidth: '100%', width: '80%',height: '90%',  margin: '0 auto' }}>
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center', width:'320px' }}>
             <TextField
               label="Your Name"
               variant="outlined"
@@ -175,10 +175,14 @@ function Contact() {
               InputLabelProps={{ // for the label
                 style: { color: '#9e9ea4', fontWeight: 'bold' } // Adjust color and font weight here
               }}
+              InputProps={{ // Center text inside the input field
+                style: { textAlign: 'center' },
+                inputProps: { style: { textAlign: 'center', fontSize: '20px' } } // Center text inside the input element
+              }}
               sx={{ backgroundColor: '#FFFFFF' }} // style for the material component
             />
           </div>
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center', width:'320px' }}>
             <TextField
               label="Your Phone"
               variant="outlined"
@@ -193,12 +197,16 @@ function Contact() {
               InputLabelProps={{ // for the label
                 style: { color: '#9e9ea4', fontWeight: 'bold' } // Adjust color and font weight here
               }}
+              InputProps={{ // Center text inside the input field
+                style: { textAlign: 'center' },
+                inputProps: { style: { textAlign: 'center', fontSize: '20px' } } // Center text inside the input element
+              }}
               sx={{ backgroundColor: '#FFFFFF'}}
             />
             {phoneError && (<div className="error-message" style={{color: 'red', textAlign: 'center' }}>{phoneError}</div>)}
           </div>
                
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center', width:'320px' }}>
             <FormControl fullWidth variant="outlined" required>
               <InputLabel id="company-label" style={{ color: '#9e9ea4', fontWeight: 'bold' }} >Company</InputLabel>
               <Select
@@ -208,8 +216,11 @@ function Contact() {
                 value={selectedCompany}
                 onChange={handleEmailChange}
                 label="Company"
-                
-                sx={{ backgroundColor: '#FFFFFF'}}
+                error={!!emailError}
+
+                sx={{ backgroundColor: '#FFFFFF',
+                  fontSize: '20px' // Increase the font size here
+                }}
               >
                 <MenuItem value="None"><em></em></MenuItem>
                 {Object.keys(cnames).map((company) => (
@@ -218,12 +229,12 @@ function Contact() {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText  style={{ color: '#9e9ea4', fontWeight: 'bold' }}>Select a company to send email</FormHelperText>
+              <FormHelperText  style={{ color: '#9e9ea4', fontWeight: 'bold' }}>Select a company to send email to</FormHelperText>
             </FormControl>
           </div>
           <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center'}}>
             <TextField
-              label="Description message"
+              label="Message: "
               variant="outlined"
               id="description"
               name="description"
@@ -232,13 +243,13 @@ function Contact() {
               required
               fullWidth
               multiline
-              error={!!emailError}
-              rows={10}  // Adjust the number of rows as needed
+              
+              rows={10}  
               InputProps={{
-                style: { minHeight: '300px',width:'550px' }  // Set a minimum height for the input
+                style: { minHeight: '300px',width:'550px' } 
               }}
               InputLabelProps={{
-                style: { fontWeight: 'bold', color: '#9e9ea4' }  // Adjust label styles as needed
+                style: { fontWeight: 'bold', color: '#9e9ea4' }  
               }}
               sx={{ backgroundColor: '#FFFFFF' }}
             />

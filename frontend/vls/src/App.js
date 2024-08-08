@@ -15,10 +15,12 @@ import NewProcess from "./pages/Company/NewProcess";
 import ContactC from "./pages/Company/ContactC";
 import Customersc from "./pages/Company/CustomersC";
 import EditCustomerC from "./pages/Company/EditCustomerC";
+import DeleteCustomerC from "./pages/Company/DeleteCustomerC";
 import AnalyticsC from "./pages/Company/AnalyticsC";
 import ProcessC from "./pages/Company/ProcessC";
 import Payment from "./pages/Company/Payment";
 import Clients from "./pages/Admin/Clients";
+
 // Main App component
 function App() {
   useEffect(() => {
@@ -53,6 +55,7 @@ function App() {
           <Route path="/contactCompany" element={<ContactC />} />
           <Route path="/customersCompany" element={<Customersc />} />
           <Route path="/EditCustomerC" element={<EditCustomerC />} />
+          <Route path="/DeleteCustomerC" element={<DeleteCustomerC />} />
           <Route path="/analyticsCompany" element={<AnalyticsC />} />
           <Route path="/EditProceses" element={<EditProceses />} />
           <Route path="/Payment" element={<Payment />} />

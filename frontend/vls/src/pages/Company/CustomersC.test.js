@@ -23,7 +23,7 @@ describe("CustomersC Component", () => {
         <CustomersC />
       </MemoryRouter>
     );
-    const element = screen.getByText("PEOPLE");
+    const element = screen.getByText("Debtors");
     expect(element).toBeInTheDocument();
   });
 
@@ -37,7 +37,7 @@ describe("CustomersC Component", () => {
     );
 
     await waitFor(() => {
-      const element = screen.getByText("PEOPLE");
+      const element = screen.getByText("Debtors");
       expect(element).toBeInTheDocument();
     });
   });
