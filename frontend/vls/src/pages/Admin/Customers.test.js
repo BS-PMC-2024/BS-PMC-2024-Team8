@@ -23,7 +23,7 @@ describe("Customers Component", () => {
         <Customers />
       </MemoryRouter>
     );
-    const element = screen.getByText("CUSTOMERS"); // Adjust the text to match your component
+    const element = screen.getByText("Customers"); // Adjust the text to match your component
     expect(element).toBeInTheDocument();
   });
 });

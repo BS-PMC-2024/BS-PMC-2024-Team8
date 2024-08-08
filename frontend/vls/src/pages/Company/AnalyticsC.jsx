@@ -281,6 +281,8 @@ const Analytics = () => {
       <Header openSidebar={openSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} openSidebar={openSidebar} />
       <main className='main-container'>
+      <h1 style={{fontSize:'22px',marginLeft:'10px'}}>Analytics </h1>
+
         <div className='charts'>
           <div> 
             <h3 style={{ textAlign: 'center' }}>Top Debt clients</h3> 
@@ -303,7 +305,7 @@ const Analytics = () => {
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='count' fill='#8884d8' />
+                <Bar dataKey='count' fill='#8884d8'  background={{  fill: "transparent" }}/>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -350,7 +352,7 @@ const Analytics = () => {
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='count' fill='#EE4E4E' background={{ fill: '#eee' }} />
+                <Bar dataKey='count' fill='#EE4E4E' background={{  fill: "transparent" }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -386,7 +388,7 @@ const Analytics = () => {
                 <RadialBar
                   minAngle={15}
                   label={{ position: 'insideStart', fill: '#fff' }}
-                  background
+                  background={{  fill: "transparent" }}
                   clockWise
                   dataKey='value'
                 >
@@ -454,7 +456,7 @@ const Analytics = () => {
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='value' fill='#E178C5' background={{ fill: '#eee' }} />
+                <Bar dataKey='value' fill='#E178C5' background={{  fill: "transparent" }} />
               </BarChart>
             </ResponsiveContainer>
           </div>

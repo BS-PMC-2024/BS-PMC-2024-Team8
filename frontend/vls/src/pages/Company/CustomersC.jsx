@@ -92,7 +92,7 @@ const CustomersC = () => {
       />
       <main className="main-container">
         <div className="main-title">
-          <h3>PEOPLE</h3>
+          <h3 style={{fontSize:'21px'}}>Debtors</h3>
         </div>
         <div className="table-container">
           <table className="customers-table">

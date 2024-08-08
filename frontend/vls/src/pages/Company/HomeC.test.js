@@ -40,7 +40,7 @@ describe('HomeC component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('DASHBOARD')).toBeInTheDocument();
+      expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
   });
 
