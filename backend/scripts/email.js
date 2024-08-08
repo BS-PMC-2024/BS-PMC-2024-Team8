@@ -1,7 +1,7 @@
 const emailjs = require('@emailjs/nodejs');
 const { link } = require('../routes/UserRoutes');
 
-const sendEmail = (data) => {
+const sendEmail = async (data) => {
   const serviceID = 'order_conformation';
   const templateID = 'order_c';
   const publicKey = 'bVId8LXlgw6L9ZnIt';
@@ -15,18 +15,15 @@ const sendEmail = (data) => {
     link: data.link
   };
 
-  emailjs.send(serviceID, templateID, templateParams, {
-    publicKey: publicKey,
-    privateKey: privateKey, 
-  })
-  .then(
-    (response) => {
-      console.log('SUCCESS!', response.status, response.text);
-    },
-    (err) => {
-      console.log('FAILED...', err);
-    }
-  );
+  try {
+    const response = await emailjs.send(serviceID, templateID, templateParams, {
+      publicKey: publicKey,
+      privateKey: privateKey,
+    });
+    console.log('SUCCESS!', response.status, response.text);
+  } catch (err) {
+    console.error('FAILED...', err);
+  }
 };
 
 module.exports = sendEmail;

@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const express = require('express');
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const express = require("express");
 const app = express();
-const { startScheduler } = require('./scripts/scheduler');
+const { startScheduler } = require("./scripts/scheduler");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -14,7 +14,6 @@ mongoose.connect('mongodb+srv://ahkcht981:Ahkcht98@bstorec.5l8i8lk.mongodb.net/n
 })
 .then(async() => {
   console.log('Connected to MongoDB');
-  //await authenticate(); 
   //startScheduler();
 })
 .catch(err => console.error('Error connecting to MongoDB:', err));
@@ -22,13 +21,13 @@ mongoose.connect('mongodb+srv://ahkcht981:Ahkcht98@bstorec.5l8i8lk.mongodb.net/n
 // Import routes
 const userRoutes = require('./routes/UserRoutes');
 const processRoutes = require('./routes/ProcessRoutes');
-const transactionRoutes = require('./routes/transactionRoutes');
+const transactionRoutes = require('./routes/TransactionRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 // Use routes without changing the base URL
+app.use('/', transactionRoutes);
 app.use('/', userRoutes);
 app.use('/', processRoutes);
-app.use('/', transactionRoutes);
 app.use('/', authRoutes);
 require('./scripts/scheduler');
 

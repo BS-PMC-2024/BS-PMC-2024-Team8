@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./stylesAdmin.css";
 import EditProceses from "./EditProceses";
-
+import Cookies from "js-cookie";
 
 function Proceses() {
   const navigate = useNavigate();
@@ -18,11 +18,59 @@ function Proceses() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [selectedprocesses, setSelectedprocesses] = useState(null);
 
+  useEffect(() => {
+    const checkAdminPermission = async () => {
+      const email = Cookies.get("email");
+
+      if (!email) {
+        navigate("/", { replace: true });
+        return;
+      }
+      try {
+        const response = await axios.post(
+          "http://localhost:6500/check-permission",
+          { email }
+        );
+
+        if (!response.data.data.premission == "admin") {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error checking admin permission:", error);
+        navigate("/", { replace: true });
+      }
+    };
+    checkAdminPermission();
+  }, [navigate]);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
+  useEffect(() => {
+    const checkAdminPermission = async () => {
+      const email = Cookies.get("email");
 
+      if (!email) {
+        navigate("/", { replace: true });
+        return;
+      }
+      try {
+        const response = await axios.post(
+          "http://localhost:6500/check-permission",
+          { email }
+        );
+
+        if (!response.data.data.premission == "admin") {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error checking admin permission:", error);
+        navigate("/", { replace: true });
+      }
+    };
+    checkAdminPermission();
+  }, [navigate]);
+  
   useEffect(() => {
     const fetchProcesses = async () => {
       try {
