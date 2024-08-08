@@ -14,6 +14,7 @@ const CustomersC = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const navigate = useNavigate();
+
   function getCookie(val) {
     const cookies = document.cookie.split("; ");
     for (const cookie of cookies) {
@@ -24,7 +25,9 @@ const CustomersC = () => {
     }
     return null;
   }
+
   const company = getCookie("company");
+
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
@@ -118,7 +121,18 @@ const CustomersC = () => {
               {people.map((person) => (
                 <tr key={person._id}>
                   <td>{person.Name}</td>
-                  <td>{person.Mail}</td>
+                  <td>
+                    <a
+                      href={`mailto:${person.Mail}`}
+                      style={{
+                        color: "#007bff",
+                      }}
+                      onMouseOver={(e) => e.target.style.textDecoration = "underline"}
+                      onMouseOut={(e) => e.target.style.textDecoration = "none"}
+                    >
+                      {person.Mail}
+                    </a>
+                  </td>
                   <td>{person.Debt}</td>
                   <td>{person.Age}</td>
                   <td>{person.City}</td>
