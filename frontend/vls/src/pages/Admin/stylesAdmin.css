@@ -143,18 +143,16 @@ body {
 }
 
 .filter-button {
-  border: 1px outset #3d6b45;
-  background-color: lightBlue;
+  background-color: #7c7c7c;
   margin-right: 10px;
   padding: 10px;
   min-width: 90px;
   cursor: pointer;
-  background-color: #52965e;
 
 }
 
 .filter-button.active {
-  background-color: #7c7c7c;
+  background-color: #309541;
   color: white;
 }
 

@@ -73,11 +73,18 @@ const ProcessC = () => {
   }, [processes, filter, startDate, endDate]);
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this process?");
+    if (!confirmed) {
+      return;
+    }
+
     try {
       const response = await axios.delete(`http://localhost:6500/deleteprocess/${id}`);
       if (response.status === 200) {
         setProcesses(processes.filter((process) => process._id !== id));
         console.log("Process deleted successfully");
+        window.confirm("Process deleted successfully");
+
       } else {
         console.error("Failed to delete process:", response.data.message);
       }
