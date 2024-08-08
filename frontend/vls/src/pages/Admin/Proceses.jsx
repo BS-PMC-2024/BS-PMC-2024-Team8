@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./stylesAdmin.css";
 import EditProceses from "./EditProceses";
-import Cookies from "js-cookie";
+
 
 function Proceses() {
   const navigate = useNavigate();
@@ -18,59 +18,11 @@ function Proceses() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [selectedprocesses, setSelectedprocesses] = useState(null);
 
-  useEffect(() => {
-    const checkAdminPermission = async () => {
-      const email = Cookies.get("email");
-
-      if (!email) {
-        navigate("/", { replace: true });
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:6500/check-permission",
-          { email }
-        );
-
-        if (!response.data.data.premission == "admin") {
-          navigate("/", { replace: true });
-        }
-      } catch (error) {
-        console.error("Error checking admin permission:", error);
-        navigate("/", { replace: true });
-      }
-    };
-    checkAdminPermission();
-  }, [navigate]);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
-  useEffect(() => {
-    const checkAdminPermission = async () => {
-      const email = Cookies.get("email");
 
-      if (!email) {
-        navigate("/", { replace: true });
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:6500/check-permission",
-          { email }
-        );
-
-        if (!response.data.data.premission == "admin") {
-          navigate("/", { replace: true });
-        }
-      } catch (error) {
-        console.error("Error checking admin permission:", error);
-        navigate("/", { replace: true });
-      }
-    };
-    checkAdminPermission();
-  }, [navigate]);
-  
   useEffect(() => {
     const fetchProcesses = async () => {
       try {
@@ -85,12 +37,19 @@ function Proceses() {
   }, []);
 
   const handleDelete = async (id) => {
+     // הצגת הודעת אישור למחיקה
+    const confirmed = window.confirm("Are you sure you want to delete this process?");
+    if (!confirmed) {
+      return;
+    }
+
     try {
       const response = await axios.delete(`http://localhost:6500/deleteprocess/${id}`);
       if (response.status === 200) {
         setProcesses(processes.filter((process) => process._id !== id));
         setFilteredProcesses(filteredProcesses.filter((process) => process._id !== id));
         console.log("Process deleted successfully");
+        window.confirm("Process deleted successfully");
       } else {
         console.error("Failed to delete process:", response.data.message);
       }
