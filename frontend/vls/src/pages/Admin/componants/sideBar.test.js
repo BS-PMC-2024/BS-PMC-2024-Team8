@@ -20,6 +20,8 @@ jest.mock("react-icons/bs", () => ({
   BsGraphUp: () => <div data-testid="icon-analytics">AnalyticsIcon</div>,
   BsPeopleFill: () => <div data-testid="icon-customers">CustomersIcon</div>,
   BsEnvelopeFill: () => <div data-testid="icon-contact">ContactIcon</div>,
+  BsPersonBoundingBox: () => <div data-testid="icon-clients">ClientsIcon</div>,
+
 }));
 
 jest.mock("axios");
@@ -39,6 +41,7 @@ const renderWithRouter = (component, { route = "/" } = {}) => {
         <Route path="/contactAdmin" element={<Contact />} />
         <Route path="/customersAdmin" element={<Customers />} />
         <Route path="/analyticsAdmin" element={<Analytics />} />
+        
       </Routes>
     </MemoryRouter>
   );
@@ -59,6 +62,7 @@ describe("Sidebar component", () => {
     expect(await screen.findByTestId("icon-analytics")).toBeInTheDocument();
     expect(await screen.findByTestId("icon-customers")).toBeInTheDocument();
     expect(await screen.findByTestId("icon-contact")).toBeInTheDocument();
+    expect(await screen.findByTestId("icon-clients")).toBeInTheDocument();
   });
 
   test("toggles sidebar responsiveness", () => {

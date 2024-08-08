@@ -56,7 +56,7 @@ function Contact() {
     const getData = async () => {
       try {
         const email = Cookies.get('email');
-        const response = await axios.get(`http://localhost:6500/${email}`);
+        const response = await axios.get(process.env.SERVERENDPOINT+`/${email}`);
         const user = response.data;
         setName(user.data.full_name);
       } catch (error) {

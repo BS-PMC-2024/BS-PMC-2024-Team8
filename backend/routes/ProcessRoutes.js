@@ -79,7 +79,11 @@ router.get('/allprocesses/:company', async (req, res) => {
   
       const uploadStream = bucket.openUploadStream(req.file.originalname);
       uploadStream.end(fileBuffer);
-  
+      const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(sheet);
+
       const { discount, communication, strategy, cname, status, moneyC, peopleC, peopleR, date, sector } = req.body;
       const process = new Process({
         cname,
@@ -87,7 +91,7 @@ router.get('/allprocesses/:company', async (req, res) => {
         file: uploadStream.id.toString(),
         moneyC,
         peopleC,
-        peopleR,
+        peopleR: data.length,
         date,
         discount,
         communication: JSON.parse(communication),
@@ -97,10 +101,6 @@ router.get('/allprocesses/:company', async (req, res) => {
   
       await process.save();
   
-      const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const data = XLSX.utils.sheet_to_json(sheet);
       const peopleData = data.map(row => ({
         Name: row['Name'],
         Mail: row['Mail'],

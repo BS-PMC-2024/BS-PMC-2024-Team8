@@ -1,15 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box, Typography } from '@mui/material';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import emailjs from 'emailjs-com';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 const Payment = () => {
-  const { name, phone, mail, debt, age, city, cname, discount, via } = useParams();
-  const [code, setCode] = useState('');
+  const query = useQuery();
+  const name = query.get('name');
+  const phone = query.get('phone');
+  const mail = query.get('mail');
+  const debt = query.get('debt');
+  const age = query.get('age');
+  const city = query.get('city');
+  const cname = query.get('cname');
+  const discount = query.get('discount');
+  const via = query.get('via');
+  const file = query.get('file');
+  const initialOptions = {
+    clientId: "AUw64R1RHWdRKv_e7P92hTsbT9gA8L5HZVFjhG",
+    currency: "USD",
+    intent: "capture",
+};
   const [paymentData, setPaymentData] = useState({
     name: '',
     phone: '',
@@ -20,52 +39,66 @@ const Payment = () => {
     cvv: '',
     id: '',
     amountPayments: 1,
-    date: ''
+    date: '',
+    cname: '',
+    age: '',
+    city: '',
+    discount: '',
+    via: '',
+    file: ''
   });
+
   useEffect(() => {
     const now = new Date();
     const formattedDate = format(now, 'dd/MM/yyyy');
+    let debtValue = debt ? parseFloat(debt) : 0;
+    let discountValue = 0;
+    if (discount && discount.endsWith('%')) {
+      discountValue = parseFloat(discount) / 100;
+    }
+    const finalDebt = debtValue - (debtValue * discountValue);
     setPaymentData({
-      ...paymentData,
-      name,
-      phone,
-      mail,
-      cname,
-      age,
-      city,
-      discount,
-      via,
-      debt: parseFloat(debt),
-      date: formattedDate
+      name: name || '',
+      phone: phone || '',
+      mail: mail || '',
+      cname: cname || '',
+      age: age || '',
+      city: city || '',
+      discount: discount || '',
+      via: via || '',
+      debt: finalDebt,
+      date: formattedDate,
+      expiry_date: '',
+      file: file
     });
-  }, [name, phone, mail, debt]);
+  }, [name, phone, mail, debt, age, city, cname, discount, via]);
 
   function generateRandomCode() {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let code = '';
-      const codeLength = 20;
-    
-      for (let i = 0; i < codeLength; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        code += characters.charAt(randomIndex);
-      }
-      return code;
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    const codeLength = 20;
+
+    for (let i = 0; i < codeLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    return code;
   }
-  
+
   const handleSendConfirmation = () => {
-          emailjs.init("98g7Qzscyfz-S-J7p");
-          const serviceId = "service_lxiaq84";
-          const templateId = "template_kzggrep";
-          const generatedCode = generateRandomCode();
-          emailjs.send(serviceId, templateId, {
-              email: mail,
-              code: generatedCode,
-              name: name,
-              debt: debt,
-              company:cname,
-              date: paymentData.date
-          });
-      }
+    emailjs.init("98g7Qzscyfz-S-J7p");
+    const serviceId = "service_lxiaq84";
+    const templateId = "template_kzggrep";
+    const generatedCode = generateRandomCode();
+    emailjs.send(serviceId, templateId, {
+      email: paymentData.mail,
+      code: generatedCode(),
+      name: paymentData.name,
+      debt: paymentData.debt,
+      company: paymentData.cname,
+      date: paymentData.date
+    });
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +111,7 @@ const Payment = () => {
   const handleDateChange = (date) => {
     setPaymentData({
       ...paymentData,
-      expiry_date: format(date, 'dd/MM/yyyy')
+      expiry_date: date ? format(date, 'dd/MM/yyyy') : ''
     });
   };
 
@@ -112,15 +145,17 @@ const Payment = () => {
     }
 
     try {
+      console.log(paymentData);
       const res = await axios.post('http://localhost:6500/addTransaction', paymentData);
+      console.log(res);
       if (res.status === 200) {
         alert('Payment Successful');
+        await handleSendConfirmation();
       }
     } catch (err) {
       alert('Payment Failed: ' + err);
       console.log(err);
     }
-    handleSendConfirmation();
   };
 
   const maxPayments = paymentData.debt > 5000 ? 24 : 12;
@@ -178,7 +213,7 @@ const Payment = () => {
         <FormControl fullWidth margin="normal">
           <InputLabel>Expiry Date</InputLabel>
           <DatePicker
-            selected={paymentData.expiry_date ? new Date(paymentData.expiry_date) : null}
+            selected={paymentData.expiry_date ? parse(paymentData.expiry_date, 'dd/MM/yyyy', new Date()) : null}
             onChange={handleDateChange}
             dateFormat="dd/MM/yyyy"
             customInput={<TextField fullWidth margin="normal" />}
@@ -220,6 +255,30 @@ const Payment = () => {
         <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginBottom: '10px' }}>
           Submit Payment
         </Button>
+        <PayPalScriptProvider style ={{marginTop:'10px'}} options={initialOptions}>
+            <PayPalButtons 
+                style={{ layout: "horizontal" }}
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [{
+                      amount: {
+                        value: paymentData.debt,
+                      },
+                    }],
+                  });
+                }}
+                onApprove={(data, actions) => {
+                  return actions.order.capture().then((details) => {
+                    alert('Payment Successful');
+                    handleSendConfirmation();
+                  });
+                }}
+                onError={(err) => {
+                  console.error('PayPal Checkout onError', err);
+                  alert('Payment Failed');
+                }}
+            />
+        </PayPalScriptProvider>
       </form>
     </Box>
   );

@@ -42,7 +42,31 @@ const Analytics = () => {
   const openSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
+  useEffect(() => {
+    const checkAdminPermission = async () => {
+      const email = Cookies.get("email");
 
+      if (!email) {
+        navigate("/", { replace: true });
+        return;
+      }
+      try {
+        const response = await axios.post(
+          "http://localhost:6500/check-permission",
+          { email }
+        );
+
+        if (!response.data.data.premission == "admin") {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error checking admin permission:", error);
+        navigate("/", { replace: true });
+      }
+    };
+    checkAdminPermission();
+  }, [navigate]);
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -256,31 +280,33 @@ const Analytics = () => {
       <Header openSidebar={openSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} openSidebar={openSidebar} />
       <main className='main-container'>
+      <h3 style={{fontSize:'21px'}}>Analytics</h3>
         <div className='charts'>
-          <div>
-            <h3 style={{ textAlign: 'center' }}>Top Active Companies</h3>
-            <ResponsiveContainer width='100%' height={400}>
-              <BarChart
-                width={500}
-                height={300}
-                data={topActive}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-                barSize={20}
-              >
-                <XAxis dataKey='name' scale='point' padding={{ left: 10, right: 10 }} />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='count' fill='#fff445' background={{ fill: '#eee' }} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <div>
+          <h3 style={{ textAlign: "center" }}>Top Active Companies</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart
+              width={500}
+              height={300}
+              data={topActive}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+              barSize={20}
+            >
+              <XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Bar dataKey="count" fill="#fff445"  background={{ fill: "transparent" }} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
           <div>
             <h3 style={{ textAlign: 'center' }}>Monthly Money Collected</h3>
             <ResponsiveContainer width='100%' height={400}>
@@ -346,7 +372,7 @@ const Analytics = () => {
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='count' fill='#EE4E4E' background={{ fill: '#eee' }} />
+                <Bar dataKey='count' fill='#EE4E4E' background={{  fill: "transparent" }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -382,9 +408,10 @@ const Analytics = () => {
                 <RadialBar
                   minAngle={15}
                   label={{ position: 'insideStart', fill: '#fff' }}
-                  background
+                  background ={{ fill: "transparent"}}
                   clockWise
                   dataKey='value'
+
                 >
                   {ages.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -450,7 +477,7 @@ const Analytics = () => {
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='value' fill='#E178C5' background={{ fill: '#eee' }} />
+                <Bar dataKey='value' fill='#E178C5' background={{  fill: "transparent" }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
