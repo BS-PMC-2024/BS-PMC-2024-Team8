@@ -18,6 +18,7 @@ import EditCustomerC from "./pages/Company/EditCustomerC";
 import AnalyticsC from "./pages/Company/AnalyticsC";
 import ProcessC from "./pages/Company/ProcessC";
 import Payment from "./pages/Company/Payment";
+import Clients from "./pages/Admin/Clients";
 // Main App component
 function App() {
   useEffect(() => {
@@ -55,6 +56,7 @@ function App() {
           <Route path="/analyticsCompany" element={<AnalyticsC />} />
           <Route path="/EditProceses" element={<EditProceses />} />
           <Route path="/Payment" element={<Payment />} />
+          <Route path="/Clients" element={<Clients />} />
         </Routes>
       </Router>
     </div>
