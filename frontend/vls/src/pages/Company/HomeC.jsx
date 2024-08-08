@@ -17,7 +17,7 @@ function HomeC() {
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
   const [ClientNumber, setClientNumber] = useState(0);
   useEffect(() => {
-    const checkAdminPermission = async () => {
+    const checkCompanyPermission = async () => {
       const email = Cookies.get('email');
 
       if (!email) {
@@ -34,7 +34,7 @@ function HomeC() {
         navigate('/', { replace: true });
       }
     };
-    checkAdminPermission();
+    checkCompanyPermission();
   }, [navigate]);
 
   useEffect(() => {
@@ -139,7 +139,7 @@ function HomeC() {
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
       <main className='main-container'>
         <div className='main-title'>
-          <h3>DASHBOARD</h3>
+          <h3>Dashboard</h3>
         </div>
 
         <div className='main-cards'>
@@ -194,7 +194,7 @@ function HomeC() {
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray='3 3' />
-                <Bar dataKey='plans' fill='#E178C5' background={{ fill: '#eee' }} />
+                <Bar dataKey='plans' fill='#E178C5' background={{ fill: "transparent" }} />
               </BarChart>
             </ResponsiveContainer>
          </div>

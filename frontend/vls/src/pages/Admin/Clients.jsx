@@ -4,27 +4,16 @@ import Sidebar from "../Admin/componants/sideBar";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import EditCustomerC from "../Company/EditCustomerC";
 import "../Admin/stylesAdmin.css";
 import "../Admin/Customers_table.css";
 
-const CustomersC = () => {
+const Clients = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [people, setPeople] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedPerson, setSelectedPerson] = useState(null);
+  const [nameQuery, setNameQuery] = useState("");
+  const [companyQuery, setCompanyQuery] = useState("");
   const navigate = useNavigate();
-  function getCookie(val) {
-    const cookies = document.cookie.split("; ");
-    for (const cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split("=");
-      if (cookieName === val) {
-        return decodeURIComponent(cookieValue);
-      }
-    }
-    return null;
-  }
-  const company = getCookie("company");
+
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
@@ -42,7 +31,7 @@ const CustomersC = () => {
           "http://localhost:6500/check-permission",
           { email }
         );
-        if (!response.data.permission === "company") {
+        if (!response.data.permission === "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
@@ -57,7 +46,7 @@ const CustomersC = () => {
     const fetchPeople = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:6500/clients/${company}`
+          `http://localhost:6500/clients`
         );
         setPeople(response.data.clients);
       } catch (error) {
@@ -67,25 +56,29 @@ const CustomersC = () => {
     fetchPeople();
   }, []);
 
-  const handleEdit = (person) => {
-    navigate("/EditCustomerC", { state: { person } });
+  const handleDelete = async (person) => {
+    try {
+      await axios.delete(`http://localhost:6500/person/${person._id}`);
+      setPeople((people) => people.filter((p) => p._id !== person._id));
+    } catch (error) {
+      console.error("Error deleting person:", error);
+    }
   };
 
-  const handleDelete = (person) => {
-    navigate("/DeleteCustomerC", { state: { person } });
+  const handleNameSearch = (event) => {
+    setNameQuery(event.target.value);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleCompanySearch = (event) => {
+    setCompanyQuery(event.target.value);
   };
 
-  const handleSavePerson = (updatedPerson) => {
-    setPeople(
-      people.map((person) =>
-        person._id === updatedPerson._id ? updatedPerson : person
-      )
+  const filteredPeople = people.filter((person) => {
+    return (
+      person.Name.toLowerCase().includes(nameQuery.toLowerCase()) &&
+      person.company.toLowerCase().includes(companyQuery.toLowerCase())
     );
-  };
+  });
 
   return (
     <div className="grid-container">
@@ -96,7 +89,21 @@ const CustomersC = () => {
       />
       <main className="main-container">
         <div className="main-title">
-          <h3 style={{fontSize:'21px'}}>Debtors</h3>
+          <h3 style={{fontSize:'21px'}}>Clients</h3>
+        </div>
+        <div className="search-bars" style={{width:'85%',marginLeft:'15px',marginBottom:'15px'}}>
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={nameQuery}
+            onChange={handleNameSearch}
+          />
+          <input
+            type="text"
+            placeholder="Search by company"
+            value={companyQuery}
+            onChange={handleCompanySearch}
+          />
         </div>
         <div className="table-container">
           <table className="customers-table">
@@ -111,11 +118,12 @@ const CustomersC = () => {
                 <th>Phone</th>
                 <th>Messages</th>
                 <th>Discount</th>
+                <th>Company</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {people.map((person) => (
+              {filteredPeople.map((person) => (
                 <tr key={person._id}>
                   <td>{person.Name}</td>
                   <td>{person.Mail}</td>
@@ -126,13 +134,8 @@ const CustomersC = () => {
                   <td>{person.Phone}</td>
                   <td>{person.Messages}</td>
                   <td>{person.Discount}</td>
+                  <td>{person.company}</td>
                   <td>
-                    <button
-                      data-testid="edit-button"
-                      onClick={() => handleEdit(person)}
-                    >
-                      Edit
-                    </button>
                     <button
                       className="delete"
                       onClick={() => handleDelete(person)}
@@ -146,15 +149,8 @@ const CustomersC = () => {
           </table>
         </div>
       </main>
-      {showModal && (
-        <EditCustomerC
-          person={selectedPerson}
-          onClose={handleCloseModal}
-          onSave={handleSavePerson}
-        />
-      )}
     </div>
   );
 };
 
-export default CustomersC;
+export default Clients;

@@ -35,6 +35,12 @@ function Proceses() {
   }, []);
 
   const handleDelete = async (id) => {
+     // הצגת הודעת אישור למחיקה
+    const confirmed = window.confirm("Are you sure you want to delete this process?");
+    if (!confirmed) {
+      return;
+    }
+
     try {
       const response = await axios.delete(
         `http://localhost:6500/deleteprocess/${id}`
@@ -45,6 +51,7 @@ function Proceses() {
           filteredProcesses.filter((process) => process._id !== id)
         );
         console.log("Process deleted successfully");
+        window.confirm("Process deleted successfully");
       } else {
         console.error("Failed to delete process:", response.data.message);
       }
@@ -127,7 +134,7 @@ function Proceses() {
       />
       <main className="main-container">
         <div className="main-title">
-          <h3>PROCESSES</h3>
+          <h3>Processes</h3>
         </div>
         <div>
           <input

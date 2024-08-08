@@ -4,9 +4,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import Customers from "./Customers";
+import Clients from "./Clients";
 
-describe("Customers Component", () => {
+describe("Clients Component", () => {
   let mock;
 
   beforeAll(() => {
@@ -20,10 +20,10 @@ describe("Customers Component", () => {
   test("renders without crashing", () => {
     render(
       <MemoryRouter>
-        <Customers />
+        <Clients />
       </MemoryRouter>
     );
-    const element = screen.getByText("Customers"); // Adjust the text to match your component
+    const element = screen.getByText("Clients"); // Adjust the text to match your component
     expect(element).toBeInTheDocument();
   });
 });

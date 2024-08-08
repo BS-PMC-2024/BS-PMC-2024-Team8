@@ -115,8 +115,7 @@ function ContactC() {
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
       <main className='main-container' style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <form onSubmit={handleSubmit} style={{ background: '#263043', borderRadius: '0.5%', borderColor: 'rgba(5,66,123,255)', padding: '20px',   maxWidth: '100%', width: '90%',height: '100%',  margin: '0 auto'}}>
-          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
+        <form onSubmit={handleSubmit} style={{ background: '#263043', borderRadius: '0.5%', borderColor: 'rgba(5,66,123,255)', padding: '20px',   maxWidth: '100%', width: '90%',height: '100%',  margin: '0 auto'}}>          <div className='form-group' style={{ marginBottom: '40px', textAlign: 'center' }}>
             <TextField
               label="Your Name"
               variant="outlined"

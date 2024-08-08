@@ -5,6 +5,7 @@ import Header from "./componants/Header";
 import Sidebar from "./componants/sideBar";
 import Modal from "./componants/Modal";
 import "./stylesAdmin.css";
+import Cookies from "js-cookie";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const EditCustomer = () => {
@@ -13,7 +14,30 @@ const EditCustomer = () => {
   const { user } = location.state;
   const [editedUser, setEditedUser] = useState({ ...user });
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+  useEffect(() => {
+    const checkAdminPermission = async () => {
+      const email = Cookies.get("email");
 
+      if (!email) {
+        navigate("/", { replace: true });
+        return;
+      }
+      try {
+        const response = await axios.post(
+          "http://localhost:6500/check-permission",
+          { email }
+        );
+
+        if (!response.data.data.premission == "admin") {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error checking admin permission:", error);
+        navigate("/", { replace: true });
+      }
+    };
+    checkAdminPermission();
+  }, [navigate]);
   useEffect(() => {
     console.log(location.state.user);
     setEditedUser({ ...user });
@@ -22,6 +46,7 @@ const EditCustomer = () => {
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;

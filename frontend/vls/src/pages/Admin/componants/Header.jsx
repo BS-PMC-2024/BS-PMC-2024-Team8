@@ -6,6 +6,11 @@ import
  
  function Header({OpenSidebar}) {
   const handleLogOut = () => {
+    const confirmed = window.confirm("Are you sure you want to LogOut?");
+    if (!confirmed) {
+      return;
+    }
+
     Cookies.remove('email');
     window.location.href = '/';
 }
