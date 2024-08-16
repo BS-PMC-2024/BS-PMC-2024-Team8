@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "./assets/logo.png";
+// import { encrypt } from "../../../../../backend/scripts/encryption";
 // Login component
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -38,11 +39,28 @@ function Login(props) {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
+  //encryption shiiittttt
+  // const CryptoJS = require("crypto-js");
+
+  // const secretKey = "vlsProduct#2024";
+
+  // const encrypt = (text) => {
+  //   return CryptoJS.AES.encrypt(text, secretKey).toString();
+  // };
+
+  // const decrypt = (cipherText) => {
+  //   const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+  //   return bytes.toString(CryptoJS.enc.Utf8);
+  // };
+
   // Function to handle the form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (email === "" || password === "")
       return alert("Please fill in all fields");
+
+    // const encryptedPassword = encrypt(password);
+
     try {
       const response = await axios.post("http://localhost:6500/login", {
         email,

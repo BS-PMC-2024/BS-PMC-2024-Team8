@@ -1,6 +1,6 @@
-const CryptoJS = require('crypto-js');
+const CryptoJS = require("crypto-js");
 
-const secretKey = 'vlsProduct#2024'; 
+const secretKey = "vlsProduct#2024";
 
 const encrypt = (text) => {
   return CryptoJS.AES.encrypt(text, secretKey).toString();
