@@ -66,6 +66,7 @@ function Login(props) {
         email,
         password,
       });
+      console.log(email, password);
       console.log(response.data.data);
       if (response.data.data.premission) {
         if (!getCookie(email)) {
@@ -84,8 +85,11 @@ function Login(props) {
         alert("Invalid credentials");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error logging in. Please try again.");
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+      alert(error.response ? error.response.data.message : error.message);
     }
   };
   const handleForgotPass = () => {

@@ -5,15 +5,28 @@ const { encrypt, decrypt } = require("../scripts/encryption");
 
 // Handle login request
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const encryptedPassword = encrypt(password);
+  const password = req.body.password;
+  const email = req.body.email;
+  // const encryptedPassword = await encrypt(password);
   console.log("password: " + password);
-  console.log("new password: " + encryptedPassword);
+  // console.log("new password: " + encryptedPassword);
 
   try {
-    const user = await User.findOne({ email, encryptedPassword });
+    const user = await User.findOne({ email });
+    console.log(user);
     if (user) {
-      res.json({ success: true, message: "Credentials found", data: user });
+      console.log(password);
+      console.log(user.password);
+      const match = await decrypt(password, user.password);
+      if (match) {
+        res.json({ success: true, message: "Credentials found", data: user });
+      }
+      // wrong password
+      else {
+        res
+          .status(400)
+          .json({ success: false, message: "Wrong Password MADAFAKA" });
+      }
     } else {
       res.status(401).json({ success: false, message: "Invalid credentials" });
     }
@@ -28,7 +41,7 @@ router.post("/register", async (req, res) => {
   const userData = req.body;
   userData.premission = "company";
   console.log("password: " + userData.password);
-  userData.password = encrypt(userData.password);
+  userData.password = await encrypt(userData.password);
 
   console.log("new password: " + userData.password);
 
@@ -48,13 +61,13 @@ router.post("/register", async (req, res) => {
 router.put("/user/:email", async (req, res) => {
   try {
     const email = req.params.email;
-    const updatedUserData = req.body;
-    const updatedUser = await User.findOneAndUpdate(
-      { email },
-      updatedUserData,
-      { new: true }
-    );
-    if (updatedUser) {
+    const newpassword = req.body.password;
+    const user = await User.findOne({ email });
+    if (user) {
+      // Update the user with the new data
+      user["password"] = await encrypt(newpassword);
+      const updatedUser = await user.save();
+
       res.status(200).json({ success: true, user: updatedUser });
     } else {
       res.status(404).json({ success: false, message: "User not found" });
