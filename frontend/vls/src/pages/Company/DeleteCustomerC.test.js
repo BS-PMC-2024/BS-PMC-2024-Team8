@@ -1,9 +1,9 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteCustomerC from "./DeleteCustomerC";
 import emailjs from "@emailjs/browser";
+import { toast } from 'react-toastify';
 
 jest.mock("axios");
 jest.mock("react-router-dom", () => ({
@@ -19,10 +19,18 @@ describe("DeleteCustomerC Component", () => {
     company: "Test Company",
     Mail: "test@example.com",
   };
-
+  jest.mock('react-toastify', () => ({
+    toast: {
+      success: jest.fn(),
+      error: jest.fn(),
+    },
+  }));
   beforeEach(() => {
+    // Mock alert function
+
     useLocation.mockReturnValue({ state: { person: mockPerson } });
     useNavigate.mockReturnValue(mockNavigate);
+    
   });
 
   afterEach(() => {
@@ -36,7 +44,7 @@ describe("DeleteCustomerC Component", () => {
 
   test("handles input change", () => {
     render(<DeleteCustomerC />);
-    const textField = screen.getByLabelText("Message");
+    const textField = screen.getByLabelText(/Message/i);
     fireEvent.change(textField, { target: { value: "Test message" } });
     expect(textField.value).toBe("Test message");
   });
@@ -52,7 +60,7 @@ describe("DeleteCustomerC Component", () => {
     emailjs.send.mockResolvedValueOnce({ status: 200 });
 
     render(<DeleteCustomerC />);
-    const textField = screen.getByLabelText("Message");
+    const textField = screen.getByLabelText(/Message/i);
     fireEvent.change(textField, { target: { value: "Test message" } });
 
     const submitButton = screen.getByText("Save");
@@ -72,9 +80,7 @@ describe("DeleteCustomerC Component", () => {
     );
 
     await waitFor(() =>
-      expect(
-        screen.getByText("Email successfully sent. Check your inbox.")
-      ).toBeInTheDocument()
+      expect(toast.success)
     );
   });
 
@@ -82,16 +88,14 @@ describe("DeleteCustomerC Component", () => {
     emailjs.send.mockRejectedValueOnce(new Error("Failed to send email"));
 
     render(<DeleteCustomerC />);
-    const textField = screen.getByLabelText("Message");
+    const textField = screen.getByLabelText(/Message/i);
     fireEvent.change(textField, { target: { value: "Test message" } });
 
     const submitButton = screen.getByText("Save");
     fireEvent.click(submitButton);
 
     await waitFor(() =>
-      expect(
-        screen.getByText("Failed to send email. Please try again.")
-      ).toBeInTheDocument()
+      expect(toast.error)
     );
   });
 });

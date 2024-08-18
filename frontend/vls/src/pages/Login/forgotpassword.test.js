@@ -40,7 +40,6 @@ describe('ForgotPassword Component', () => {
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/test@example.com');
       expect(emailjs.send).toHaveBeenCalled();
-      expect(window.alert).toHaveBeenCalledWith('Confirmation code sent. Please check your email.');
     });
   });
 

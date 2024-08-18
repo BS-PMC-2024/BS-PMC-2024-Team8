@@ -48,7 +48,23 @@ router.put('/user/:email', async (req, res) => {
       res.status(500).json({ success: false, message: 'Server error' });
     }
   });
-  
+  router.delete('/user/:email', async (req, res) => {
+    try {
+      const email = req.params.email;
+      const user
+        = await User.findOneAndDelete ({ email });
+      if (user) {
+        res.status(200).json({ success: true, user });
+      }
+      else {
+        res.status(404).json({ success: false, message: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+
   // Get user information
 router.get('/:email', async (req, res) => {
     try {

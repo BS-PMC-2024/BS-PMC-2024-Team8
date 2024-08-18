@@ -6,8 +6,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 import emailjs from '@emailjs/browser';
-
-
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { TextField, Button } from '@mui/material';
 
 function ContactC() {
@@ -83,9 +83,29 @@ function ContactC() {
       phone: phone,
       description: description,
       });
-      alert("Email successfully sent. Check your inbox.");
+      toast.success(`Email successfully sent. Check your inbox.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     } catch (error) {
-      alert("Failed to send email. Please try again.");
+      toast.success(`Failed to send email. Please try again.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     }
   };
 
@@ -111,6 +131,8 @@ function ContactC() {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className='grid-container' data-testid='ContactC'>
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
@@ -210,6 +232,7 @@ function ContactC() {
         </form> 
       </main>
     </div>
+    </>
   );
 }
 

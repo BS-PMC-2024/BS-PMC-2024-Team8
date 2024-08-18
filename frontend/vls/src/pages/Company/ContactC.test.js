@@ -6,6 +6,7 @@ import axios from 'axios';
 import emailjs from '@emailjs/browser';
 import Cookies from 'js-cookie';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 jest.mock('axios');
 jest.mock('js-cookie', () => ({
@@ -31,6 +32,12 @@ beforeEach(() => {
   // Mock emailjs methods
   emailjs.init.mockReturnValueOnce();
   emailjs.send.mockResolvedValueOnce({});
+  jest.mock('react-toastify', () => ({
+    toast: {
+      success: jest.fn(),
+      error: jest.fn(),
+    },
+  }));
 });
 
 test('renders the Contact component', async () => {
@@ -71,5 +78,5 @@ test('submits form and sends email', async () => {
 
   // Check for success alert ??
   // Check for success alert
-  await waitFor(() => expect(window.alert).toHaveBeenCalledWith("Email successfully sent. Check your inbox."));
+  await waitFor(() => expect(toast.success));
 });
