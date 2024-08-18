@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import logo from "./assets/logo.png";
 // Login component
 function Login(props) {
@@ -42,7 +44,17 @@ function Login(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (email === "" || password === "")
-      return alert("Please fill in all fields");
+      return toast.warn('Please fill in all fields', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });      
     try {
       const response = await axios.post("http://localhost:6500/login", {
         email,
@@ -63,11 +75,31 @@ function Login(props) {
         }
       } else {
         deleteCookie("email");
-        alert("Invalid credentials");
+        return toast.error('Invalid credentials', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });  
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error logging in. Please try again.");
+      return toast.error('Error logging in. Please try again.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
     }
   };
   const handleForgotPass = () => {
@@ -75,6 +107,8 @@ function Login(props) {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="form-container sign-in-container">
       <form onSubmit={handleSubmit}>
         <div
@@ -114,6 +148,7 @@ function Login(props) {
       </form>
       {message && <p>{message}</p>}
     </div>
+    </>
   );
 }
 

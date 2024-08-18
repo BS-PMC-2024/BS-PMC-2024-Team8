@@ -3,6 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../Admin/componants/Header";
 import Sidebar from "../Admin/componants/sideBar";
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const ProcessC = () => {
   const navigate = useNavigate();
@@ -75,30 +79,104 @@ const ProcessC = () => {
 
     applyFilter();
   }, [processes, filter, startDate, endDate]);
-
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this process?");
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      const response = await axios.delete(
-        `http://localhost:6500/deleteprocess/${id}`
-      );
-      if (response.status === 200) {
-        setProcesses(processes.filter((process) => process._id !== id));
-        console.log("Process deleted successfully");
-        window.confirm("Process deleted successfully");
-
-      } else {
-        console.error("Failed to delete process:", response.data.message);
+  
+  const handleDelete = (id) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div style={{ textAlign: 'center', padding: '20px', background:'#222831',borderRadius:'3%' }}>
+            <h1 style={{ marginBottom: '20px' }}>Warning</h1>
+            <p style={{ marginBottom: '20px' }}>Are you sure you want to delete this process?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await axios.delete(`http://localhost:6500/deleteprocess/${id}`);
+                    if (response.status === 200) {
+                      setProcesses(processes.filter((process) => process._id !== id));
+                      toast.success('Process deleted successfully', {
+                        position: "top-right",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Slide,
+                      });
+                    } else {
+                      toast.error(`Failed to delete process: ${response.data.message}`, {
+                        position: "top-right",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Slide,
+                      });
+                    }
+                  } catch (error) {
+                    console.error("Error deleting process:", error);
+                    toast.error("Error deleting process", {
+                      position: "top-right",
+                      autoClose: 2500,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                      transition: Slide,
+                    });
+                  }
+                  onClose();
+                }}
+                style={{
+                  backgroundColor: '#059212',
+                  color: 'white',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => {
+                  toast.info('Process deletion canceled', {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                  });
+                  onClose();
+                }}
+                style={{
+                  backgroundColor: '#C40C0C',
+                  color: 'white',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        );
       }
-    } catch (error) {
-      console.error("Error deleting process:", error);
-    }
-  };
-
+    });    
+  };  
   const handleStrategy = (S) => {
     let Strategy;
     switch (S) {
@@ -131,25 +209,26 @@ const ProcessC = () => {
         <div className="main-title">
           <h3>{getCookie("company")} Processes</h3>
         </div>
-        <div>
-          <label className="date-row">From Date:</label>
+        <div style={{marginBottom:'20px'}}>
+          <label className="date-row"  style={{marginRight:"10px"}}>From Date:</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             placeholder="Start Date"
             className="date-input"
+            style={{borderRadius:"5px"}}
           />
-          <label className="date-row">To Date:</label>
+          <label className="date-row"  style={{marginLeft:"20px",marginRight:"10px"}}>To Date:</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             placeholder="End Date"
             className="date-input"
+            style={{borderRadius:"5px"}}
           />
-          <br />
-          <div className="filter-button-div">
+          <div className="filter-button-div" style={{marginLeft:"20px"}}>
             <button
               className={`filter-button ${filter === "all" ? "active" : ""}`}
               onClick={() => setFilter("all")}

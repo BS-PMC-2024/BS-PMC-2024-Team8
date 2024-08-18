@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Register component to display the registration form
 function Register() {
@@ -34,16 +36,78 @@ function Register() {
   // Function to handle the form submit
   const handleOnSubmit = async (evt) => {
     evt.preventDefault();
-    if(!state.name || !state.email || !state.password || !state.country || !state.company) return alert("Please fill in all fields. if you don't have an apartment number, please fill in 0.")
-    if((state.password.length < 8) ) return alert("Password must be at least 8 characters long.")
-    if(!passwordContainsSymbols(state.password)) return alert("Password must contain at least one symbol.")
-    if(!passwordContainsnNumbers(state.password)) return alert("Password must contain numbers.")
+    if(!state.name || !state.email || !state.password || !state.country || !state.company) return toast.error("Please fill in all fields. if you don't have an apartment number, please fill in 0.", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+    });
+    if((state.password.length < 8) ) return toast.error("Password must be at least 8 characters long.", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+    });
+    if(!passwordContainsSymbols(state.password)) return toast.error("Password must contain at least one symbol.", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+    });
+    if(!passwordContainsnNumbers(state.password)) return toast.error("Password must contain numbers.", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+    });
     try{const user = await axios.get(`http://localhost:6500/${state.email}`);
-    if(user) return alert("User already exists, please log in.")
+    if(user) return toast.warn('User already exists, please log in.', {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+    });
     return;
   }
     catch (error) {
       console.error("Error:", error);
+      toast.error('internal error on server, please try later.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
+
     }
     try {
       const response = await axios.post("http://localhost:6500/register", {
@@ -62,13 +126,25 @@ function Register() {
         company: "",
         sector: ""
       });
-      alert("User created successfully");
+      toast.success('User created successfully', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="form-container sign-up-container">
       <form onSubmit={handleOnSubmit}>
         <h1 className="titleb" style={{fontSize: "48px"}}>Create Account</h1>
@@ -127,6 +203,7 @@ function Register() {
         <button type="submit">Sign Up</button>
       </form>
     </div>
+    </>
   );
 }
 

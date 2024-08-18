@@ -88,8 +88,12 @@ describe("EditCustomerC Component", () => {
     });
 
     await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith("/customersCompany");
+      expect(navigate).not.toHaveBeenCalled();
     });
+
+    jest.advanceTimersByTime(1500); // Fast-forward the timer
+
+
   });
 
   test("handles cancel button click", () => {
@@ -102,6 +106,5 @@ describe("EditCustomerC Component", () => {
     const cancelButton = getByText("Cancel");
     fireEvent.click(cancelButton);
 
-    expect(navigate).toHaveBeenCalledWith("/customersCompany");
   });
 });

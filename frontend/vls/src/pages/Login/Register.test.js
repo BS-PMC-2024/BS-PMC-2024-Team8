@@ -2,58 +2,78 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import Register from './Register';
+import { ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
+import { toast } from 'react-toastify';
 
 // Mock axios
 jest.mock('axios');
+
+// Mock react-toastify
+jest.mock('react-toastify', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+  },
+  ToastContainer: () => null,
+}));
+
+// Mock Material-UI components
+jest.mock('@mui/material', () => ({
+  ...jest.requireActual('@mui/material'),
+  FormControl: ({ children }) => <div data-testid="form-control">{children}</div>,
+  InputLabel: ({ children }) => <label>{children}</label>,
+  Select: ({ children, ...props }) => <select {...props}>{children}</select>,
+  MenuItem: ({ value, children }) => <option value={value}>{children}</option>,
+}));
+
+const theme = createTheme();
+
+const customRender = (ui, options) =>
+  render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>, options);
 
 describe('Register Component', () => {
   beforeEach(() => {
     axios.get.mockClear();
     axios.post.mockClear();
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   test('handles input change', () => {
-    render(<Register />);
+    customRender(<Register />);
 
     fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
-    expect(screen.getByPlaceholderText('Name').value).toBe('John Doe');
+    expect(screen.getByPlaceholderText('Name')).toHaveValue('John Doe');
 
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
-    expect(screen.getByPlaceholderText('Email').value).toBe('john@example.com');
+    expect(screen.getByPlaceholderText('Email')).toHaveValue('john@example.com');
 
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password1!' } });
-    expect(screen.getByPlaceholderText('Password').value).toBe('Password1!');
+    expect(screen.getByPlaceholderText('Password')).toHaveValue('Password1!');
 
     fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: 'USA' } });
-    expect(screen.getByPlaceholderText('Country').value).toBe('USA');
+    expect(screen.getByPlaceholderText('Country')).toHaveValue('USA');
 
     fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
-    expect(screen.getByPlaceholderText('Company').value).toBe('ABC Corp');
+    expect(screen.getByPlaceholderText('Company')).toHaveValue('ABC Corp');
   });
 
   test('validates form submission', async () => {
-    render(<Register />);
+    customRender(<Register />);
 
-    fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: '' } });
-    fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: '' } });
-
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Please fill in all fields. if you don't have an apartment number, please fill in 0.");
+      expect(toast.error).toHaveBeenCalledWith(
+        "Please fill in all fields. if you don't have an apartment number, please fill in 0.",
+        expect.any(Object)
+      );
     });
   });
 
   test('checks password validation for symbols and numbers', async () => {
-    render(<Register />);
+    customRender(<Register />);
 
     fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
@@ -61,31 +81,40 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
 
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'pass' } });
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Password must be at least 8 characters long.");
+      expect(toast.error).toHaveBeenCalledWith(
+        "Password must be at least 8 characters long.",
+        expect.any(Object)
+      );
     });
 
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password' } });
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Password must contain at least one symbol.");
+      expect(toast.error).toHaveBeenCalledWith(
+        "Password must contain at least one symbol.",
+        expect.any(Object)
+      );
     });
 
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password!' } });
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Password must contain numbers.");
+      expect(toast.error).toHaveBeenCalledWith(
+        "Password must contain numbers.",
+        expect.any(Object)
+      );
     });
   });
 
   test('checks for user existence', async () => {
     axios.get.mockResolvedValueOnce({ data: { email: 'john@example.com' } });
 
-    render(<Register />);
+    customRender(<Register />);
 
     fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'John Doe' } });
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'john@example.com' } });
@@ -93,11 +122,14 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Country'), { target: { value: 'USA' } });
     fireEvent.change(screen.getByPlaceholderText('Company'), { target: { value: 'ABC Corp' } });
 
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith('http://localhost:6500/john@example.com');
-      expect(window.alert).toHaveBeenCalledWith('User already exists, please log in.');
+      expect(toast.warn).toHaveBeenCalledWith(
+        "User already exists, please log in.",
+        expect.any(Object)
+      );
     });
   });
 });
