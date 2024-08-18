@@ -31,7 +31,7 @@ const NewProcess = () => {
       }
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
-        if (!response.data.premission == "company") {
+        if (response.data.data.premission !== "company") {
           navigate('/', { replace: true });
         }
         else

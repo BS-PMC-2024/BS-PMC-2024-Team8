@@ -47,7 +47,7 @@ function CUSTOMERS() {
           { email }
         );
 
-        if (!response.data.permission == "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
