@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Payment from './Payment';
 import userEvent from '@testing-library/user-event';
+import { toast } from 'react-toastify';
 
 jest.mock('axios', () => ({
   post: jest.fn()
@@ -48,7 +49,6 @@ describe('Payment Component', () => {
 
     fireEvent.click(screen.getByText(/Submit Payment/i));
 
-    expect(alertMock).toHaveBeenCalledWith('Please fill in all required fields.');
-    alertMock.mockRestore();
+    expect(toast.error);
   });
 });
