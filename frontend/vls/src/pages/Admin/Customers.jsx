@@ -26,6 +26,11 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "./componants/sideBar";
 import "./Customers_table.css";
 import EditCustomer from "./EditCustomer";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { toast, Slide } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function CUSTOMERS() {
   const navigate = useNavigate();
@@ -75,27 +80,108 @@ function CUSTOMERS() {
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
-
   const handleDelete = async (email) => {
-    const confirmed = window.confirm("Are you sure you want to delete this process?");
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      const response = await axios.delete(
-        `http://localhost:6500/deleteuser/${encodeURIComponent(email)}`
-      );
-      if (response.status === 200) {
-        setUsers(users.filter((user) => user.email !== email));
-        console.log("User deleted successfully");
-        window.confirm("User deleted successfully");
-      } else {
-        console.error("Failed to delete user:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div style={{ textAlign: 'center', padding: '20px', background: '#222831', borderRadius: '8px', color: '#fff' }}>
+            <h1 style={{ marginBottom: '20px' }}>Warning</h1>
+            <p style={{ marginBottom: '20px' }}>Are you sure you want to delete this customer?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await axios.delete(`http://localhost:6500/user/${encodeURIComponent(email)}`);
+                    if (response.status === 200) {
+                      setUsers(users.filter((user) => user.email !== email));
+  
+                      setTimeout(() => {
+                        toast.success('Customer deleted successfully', {
+                          position: "top-right",
+                          autoClose: 2500,
+                          hideProgressBar: false,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                          theme: "colored",
+                          transition: Slide,
+                        });
+                      }, 0);
+  
+                    } else {
+                      toast.error(`Failed to delete customer: ${response.data.message}`, {
+                        position: "top-right",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Slide,
+                      });
+                    }
+                  } catch (error) {
+                    console.error("Error deleting customer:", error);
+                    toast.error("Error deleting customer", {
+                      position: "top-right",
+                      autoClose: 2500,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                      transition: Slide,
+                    });
+                  } finally {
+                    onClose(); // Close the confirm alert after handling the response
+                  }
+                }}
+                style={{
+                  backgroundColor: '#059212',
+                  color: 'white',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => {
+                  toast.info('Customer deletion canceled', {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                  });
+                  onClose(); // Close the confirm alert on cancel
+                }}
+                style={{
+                  backgroundColor: '#C40C0C',
+                  color: 'white',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        );
+      },
+      closeOnClickOutside: false,
+    });
   };
 
   const handleEdit = (user) => {

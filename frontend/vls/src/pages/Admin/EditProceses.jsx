@@ -4,8 +4,8 @@ import Sidebar from "./componants/sideBar";
 import axios from "axios";
 import Modal from "./componants/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import "./stylesAdmin.css";
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditProceses = () => {
   const location = useLocation();
@@ -99,13 +99,45 @@ const EditProceses = () => {
         editedProceses
       );
       if (response.status === 200) {
-        alert("Process updated successfully");
-        navigate("/processAdmin");
+         toast.success('Process updated successfully', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });  
+        setTimeout(() => {
+          navigate("/processAdmin");
+        }, 1500); 
       } else {
-        console.error("Failed to update Process:", response.data.message);
+        return toast.error(`Failed to update Process:${response.data.message}`, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
       }
     } catch (error) {
-      console.error("Error updating Process:", error);
+      return toast.error(`Error updating Process: ${error}`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     }
   };
 
@@ -118,124 +150,133 @@ const EditProceses = () => {
   }
 
   return (
-    <div className="grid-container">
-      <Header OpenSidebar={OpenSidebar} />
-      <Sidebar
-        openSidebarToggle={openSidebarToggle}
-        OpenSidebar={OpenSidebar}
-      />
-      <main className="main-container">
-        <Modal>
-          <h2>Edit Process </h2>
-          <form>
-            <div className="form-row">
-              <label>
-                Company Name:
+    <>
+      <ToastContainer />
+      <div className="grid-container">
+        <Header OpenSidebar={OpenSidebar} />
+        <Sidebar
+          openSidebarToggle={openSidebarToggle}
+          OpenSidebar={OpenSidebar}
+        />
+        <main className="main-container">
+          <Modal>
+            <h2>Edit Process </h2>
+            <form>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>Company Name:</label>
                 <input
                   type="text"
                   name="cname"
                   value={editedProceses.cname}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.cname && <span className="error">{errors.cname}</span>}
-            </div>
-            <div className="form-row">
-              <label>
-                Money Collected:
+                {errors.cname && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.cname}</span>}
+              </div>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>Money Collected:</label>
                 <input
                   type="text"
                   name="moneyC"
                   value={editedProceses.moneyC}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.moneyC && <span className="error">{errors.moneyC}</span>}
-            </div>
-            <div className="form-row">
-              <label>
-                People Collected:
+                {errors.moneyC && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.moneyC}</span>}
+              </div>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>People Collected:</label>
                 <input
                   type="text"
                   name="peopleC"
                   value={editedProceses.peopleC}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.peopleC && (
-                <span className="error">{errors.peopleC}</span>
-              )}
-            </div>
-            <div className="form-row">
-              <label>
-                People Remaining:
+                {errors.peopleC && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.peopleC}</span>}
+              </div>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>People Remaining:</label>
                 <input
                   type="text"
                   name="peopleR"
                   value={editedProceses.peopleR}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.peopleR && (
-                <span className="error">{errors.peopleR}</span>
-              )}
-            </div>
-            <div className="form-row">
-              <label>
-                Status:
+                {errors.peopleR && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.peopleR}</span>}
+              </div>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>Status:</label>
                 <input
                   type="text"
                   name="status"
                   value={editedProceses.status}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.status && <span className="error">{errors.status}</span>}
-            </div>
-            <div className="form-row">
-              <label>
-                Date:
+                {errors.status && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.status}</span>}
+              </div>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>Date:</label>
                 <input
                   type="text"
                   name="date"
                   value={editedProceses.date}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.date && <span className="error">{errors.date}</span>}
-            </div>
-            <div className="form-row">
-              <label>
-                Sector:
+                {errors.date && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.date}</span>}
+              </div>
+              <div className="form-row" style={{ display: 'flex', marginBottom: '10px' }}>
+                <label style={{ width: '150px', fontWeight: 'bold' }}>Sector:</label>
                 <input
                   type="text"
                   name="sector"
                   value={editedProceses.sector}
                   onChange={handleChange}
+                  style={{ flex: '1' }}
                 />
-              </label>
-              {errors.sector && <span className="error">{errors.sector}</span>}
-            </div>
-            <div className="button-group">
-              <button
-                className="button save-button"
-                type="button"
-                onClick={handleSave}
-              >
-                Save
-              </button>
-              <button
-                className="button cancel-button"
-                type="button"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </Modal>
-      </main>
-    </div>
+                {errors.sector && <span className="error" style={{ color: 'red', marginLeft: '10px' }}>{errors.sector}</span>}
+              </div>
+              <div className="button-group" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                <button
+                  className="button save-button"
+                  type="button"
+                  onClick={handleSave}
+                  style={{
+                    padding: '10px 20px',
+                    marginRight: '10px',
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Save
+                </button>
+                <button
+                  className="button cancel-button"
+                  type="button"
+                  onClick={handleCancel}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#f44336',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </Modal>
+        </main>
+      </div>
+    </>
   );
 };
 

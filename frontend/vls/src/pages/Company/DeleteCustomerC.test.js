@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteCustomerC from "./DeleteCustomerC";
 import emailjs from "@emailjs/browser";
+import { toast } from 'react-toastify';
 
 jest.mock("axios");
 jest.mock("react-router-dom", () => ({
@@ -18,10 +19,14 @@ describe("DeleteCustomerC Component", () => {
     company: "Test Company",
     Mail: "test@example.com",
   };
-
+  jest.mock('react-toastify', () => ({
+    toast: {
+      success: jest.fn(),
+      error: jest.fn(),
+    },
+  }));
   beforeEach(() => {
-    // Mock alert function
-    global.alert = jest.fn();
+
 
     useLocation.mockReturnValue({ state: { person: mockPerson } });
     useNavigate.mockReturnValue(mockNavigate);
@@ -75,7 +80,8 @@ describe("DeleteCustomerC Component", () => {
     );
 
     await waitFor(() =>
-      expect(global.alert).toHaveBeenCalledWith("Email successfully sent. Check your inbox.")
+
+      expect(toast.success)
     );
   });
 
@@ -90,7 +96,8 @@ describe("DeleteCustomerC Component", () => {
     fireEvent.click(submitButton);
 
     await waitFor(() =>
-      expect(global.alert).toHaveBeenCalledWith("Failed to send email. Please try again.")
+
+      expect(toast.error)
     );
   });
 });

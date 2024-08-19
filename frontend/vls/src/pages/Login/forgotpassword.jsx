@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
 // forgot password component
@@ -33,7 +35,17 @@ const ForgotPassword = () => {
       console.log(email);
       user = await axios.get(`http://localhost:6500/${email}`);
     } catch (error) {
-      alert("User not found");
+      toast.error('User not found', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
       console.error("Error fetching user data: ", error);
     }
     if (user) {
@@ -47,7 +59,17 @@ const ForgotPassword = () => {
         email: email,
         code: generatedCode,
       });
-      alert("Confirmation code sent. Please check your email.");
+      toast.info('Confirmation code sent. Please check your email.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
     }
   };
 
@@ -98,14 +120,54 @@ const ForgotPassword = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     if (code === confirmationCode) {
-      alert("Confirmation code verified");
+      toast.success('Confirmation code verified', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      }); 
       try {
         if (password.length < 8)
-          return alert("Password must be at least 8 characters long.");
+          return toast.error('Password must be at least 8 characters long.', {
+            position: "top-right",
+            autoClose: 2500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Slide,
+          });  
         if (!passwordContainsSymbols(password))
-          return alert("Password must contain at least one symbol.");
+          return toast.error('Password must contain at least one symbol.', {
+            position: "top-right",
+            autoClose: 2500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Slide,
+          });
         if (!passwordContainsNumbers(password))
-          return alert("Password must contain numbers.");
+          return toast.error('Password must contain numbers.', {
+            position: "top-right",
+            autoClose: 2500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Slide,
+          });  
 
         const user = {
           email: email,
@@ -116,13 +178,33 @@ const ForgotPassword = () => {
           `http://localhost:6500/user/${email}`,
           user
         );
-        alert("Password updated successfully");
+        toast.success('Password updated successfully', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        }); 
         navigate("/");
       } catch (error) {
         console.error("Error updating password: ", error);
       }
     } else {
-      alert("Code is incorrect");
+      toast.error('Code is incorrect', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      }); 
     }
   };
 
@@ -139,6 +221,8 @@ const ForgotPassword = () => {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div
       style={{
         display: "flex",
@@ -197,6 +281,7 @@ const ForgotPassword = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 

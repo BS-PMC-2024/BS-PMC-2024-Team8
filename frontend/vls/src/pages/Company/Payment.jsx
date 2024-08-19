@@ -7,6 +7,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { format, parse } from 'date-fns';
 import emailjs from 'emailjs-com';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -120,27 +122,77 @@ const Payment = () => {
 
     // Validation logic
     if (!paymentData.card_number || !paymentData.expiry_date || !paymentData.cvv || !paymentData.id) {
-      alert('Please fill in all required fields.');
+      toast.error(`Please fill in all required fields.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (paymentData.card_number.length !== 16) {
-      alert('Card number must be 16 digits.');
+      toast.error(`Card number must be 16 digits.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (paymentData.cvv.length !== 3) {
-      alert('CVV must be 3 digits.');
+      toast.error(`CVV must be 3 digits.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (paymentData.id.length !== 9) {
-      alert('ID must be 9 digits.');
+      toast.error(`ID must be 9 digits.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (new Date(paymentData.expiry_date) < new Date()) {
-      alert('Invalid expiry date.');
+      toast.error(`Invalid expiry date.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
@@ -149,11 +201,31 @@ const Payment = () => {
       const res = await axios.post('http://localhost:6500/addTransaction', paymentData);
       console.log(res);
       if (res.status === 200) {
-        alert('Payment Successful');
+        toast.success(`Payment Successful`, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
         await handleSendConfirmation();
       }
     } catch (err) {
-      alert('Payment Failed: ' + err);
+      toast.error(`Payment Failed: ${err}`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       console.log(err);
     }
   };
@@ -161,6 +233,8 @@ const Payment = () => {
   const maxPayments = paymentData.debt > 5000 ? 24 : 12;
 
   return (
+    <>
+    <ToastContainer />
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>Payment Information</Typography>
       <form onSubmit={handleSubmit} style={{ background: 'white', borderRadius: '0.2%', opacity: '85%' }}>
@@ -281,6 +355,7 @@ const Payment = () => {
         </PayPalScriptProvider>
       </form>
     </Box>
+    </>
   );
 };
 
