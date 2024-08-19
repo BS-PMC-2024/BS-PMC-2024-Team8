@@ -5,6 +5,8 @@ import Header from "../Admin/componants/Header";
 import Sidebar from "../Admin/componants/sideBar";
 import Modal from "../Admin/componants/Modal";
 import "../Admin/stylesAdmin.css";
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Select,
   MenuItem,
@@ -40,11 +42,34 @@ const EditCustomerC = () => {
         editedPerson
       );
       if (response.status === 200) {
-        alert("Person updated successfully");
-        navigate("/customersCompany");
-      } else {
-        alert("Failed to update person");
-        console.error("Failed to update person:", response.data.message);
+        toast.success('Person updated successfully', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
+      
+        setTimeout(() => {
+          navigate("/customersCompany");
+        }, 1500); 
+      }      
+      else {
+        return toast.error(`"Failed to update person`, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
       }
     } catch (error) {
       console.error("Error updating person:", error);
@@ -56,6 +81,8 @@ const EditCustomerC = () => {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar
@@ -122,6 +149,7 @@ const EditCustomerC = () => {
         </Modal>
       </main>
     </div>
+    </>
   );
 };
 

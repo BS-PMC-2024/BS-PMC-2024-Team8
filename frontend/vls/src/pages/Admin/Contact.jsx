@@ -6,7 +6,8 @@ import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 import Sidebar from './componants/sideBar';
 import emailjs from '@emailjs/browser';
-
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { TextField, Button, MenuItem, FormControl, InputLabel, Select, FormHelperText } from '@mui/material';
 
@@ -111,9 +112,29 @@ function Contact() {
       phone: phone,
       description: description,
       });
-      alert("Email successfully sent. Check your inbox.");
+      return toast.success('Email successfully sent. Check your inbox.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
     } catch (error) {
-      alert("Failed to send email. Please try again.");
+      toast.error('Failed to send email. Please try again.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
     }
   };
 
@@ -157,6 +178,8 @@ function Contact() {
   }, []);
 
   return (
+    <>
+    <ToastContainer />
     <div className='grid-container' data-testid='contact'>
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
@@ -261,6 +284,7 @@ function Contact() {
         </form> 
       </main>
     </div>
+    </>
   );
 }
 

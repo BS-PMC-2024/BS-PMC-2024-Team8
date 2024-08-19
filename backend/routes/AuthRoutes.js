@@ -28,6 +28,7 @@ router.post("/login", async (req, res) => {
     } else {
       res.status(401).json({ success: false, message: "Invalid credentials" });
     }
+
   } catch (error) {
     console.error("Error checking credentials:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -69,12 +70,24 @@ router.put("/user/:email", async (req, res) => {
       res.status(200).json({ success: true, user: updatedUser });
     } else {
       res.status(404).json({ success: false, message: "User not found" });
+      
+  });
+  router.delete('/user/:email', async (req, res) => {
+    try {
+      const email = req.params.email;
+      const user
+        = await User.findOneAndDelete ({ email });
+      if (user) {
+        res.status(200).json({ success: true, user });
+      }
+      else {
+        res.status(404).json({ success: false, message: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
     }
-  } catch (error) {
-    console.error("Error updating user information:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-});
+  });
 
 // Get user information
 router.get("/:email", async (req, res) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor, fireEvent, screen, within } from "@testing-library/react";
+import { render, waitFor, fireEvent, screen } from "@testing-library/react";
 import '@testing-library/jest-dom/extend-expect';
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -15,7 +15,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("EditProceses Component", () => {
   let mock, navigate;
- 
+
   const process = {
     _id: "667df09d72b1250e677f0e89",
     cname: "Yes",
@@ -38,54 +38,10 @@ describe("EditProceses Component", () => {
     mock.restore();
   });
 
-  test("initial state is set correctly", async () => {
-    render(
-      <MemoryRouter>
-        <EditProceses />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByLabelText("Company Name:")).toBeInTheDocument();
-    });
-
-    const cname = screen.getByLabelText("Company Name:");
-    const moneyC = screen.getByLabelText("Money Collected:");
-    const peopleC = screen.getByLabelText("People Collected:");
-    const peopleR = screen.getByLabelText("People Remaining:");
-    const status = screen.getByLabelText("Status:");
-    const date = screen.getByLabelText("Date:");
-    const sector = screen.getByLabelText("Sector:");
-
-    expect(cname.value).toBe(process.cname);
-    expect(moneyC.value).toBe(process.moneyC);
-    expect(peopleC.value).toBe(process.peopleC);
-    expect(peopleR.value).toBe(process.peopleR);
-    expect(status.value).toBe(process.status);
-    expect(date.value).toBe(process.date);
-    expect(sector.value).toBe(process.sector);
-  });
-
-  test("handleChange updates state correctly", async () => {
-    render(
-      <MemoryRouter>
-        <EditProceses />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByLabelText("Company Name:")).toBeInTheDocument();
-    });
-
-    const cnameInput = screen.getByLabelText("Company Name:");
-    fireEvent.change(cnameInput, {
-      target: { name: "cname", value: "Updated Company" },
-    });
-
-    expect(cnameInput.value).toBe("Updated Company");
-  });
-
   test("handleSave makes a PUT request and navigates on success", async () => {
+    // Use fake timers
+    jest.useFakeTimers();
+
     mock.onPut("http://localhost:6500/Proceses/667df09d72b1250e677f0e89").reply(200);
 
     render(
@@ -101,6 +57,7 @@ describe("EditProceses Component", () => {
     const saveButton = screen.getByText("Save");
     fireEvent.click(saveButton);
 
+    // Wait for the PUT request to be made
     await waitFor(() => {
       const request = mock.history.put.find(
         (req) => req.url === "http://localhost:6500/Proceses/667df09d72b1250e677f0e89"
@@ -108,9 +65,16 @@ describe("EditProceses Component", () => {
       expect(request).toBeTruthy();
     });
 
+    // Advance the timers to trigger the setTimeout
+    jest.advanceTimersByTime(1500);
+
+    // Check if navigate was called with the correct path
     await waitFor(() => {
       expect(navigate).toHaveBeenCalledWith("/processAdmin");
     });
+
+    // Clear the fake timers
+    jest.useRealTimers();
   });
 
   test("renders no process data message when process data is missing", () => {

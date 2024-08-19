@@ -8,6 +8,8 @@ import "../Admin/stylesAdmin.css";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { TextField, Button } from "@mui/material";
 import emailjs from "@emailjs/browser";
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DeleteCustomerC = () => {
   const location = useLocation();
@@ -47,13 +49,39 @@ const DeleteCustomerC = () => {
         cname: person.company,
         email: person.Mail,
       });
-      alert("Email successfully sent. Check your inbox.");
+      toast.success('Email successfully sent. Check your inbox.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
+    
+      setTimeout(() => {
+        navigate("/customersCompany");
+      }, 1500); 
     } catch (error) {
-      alert("Failed to send email. Please try again.");
+      return toast.error(`Failed to send email. Please try again`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     }
   };
 
   return (
+    <>
+    ToastContainer
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar
@@ -109,6 +137,7 @@ const DeleteCustomerC = () => {
         </Modal>
       </main>
     </div>
+    </>
   );
 };
 

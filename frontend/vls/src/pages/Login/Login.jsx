@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import logo from "./assets/logo.png";
 // import { encrypt } from "../../../../../backend/scripts/encryption";
 // Login component
@@ -39,27 +41,22 @@ function Login(props) {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
-  //encryption shiiittttt
-  // const CryptoJS = require("crypto-js");
-
-  // const secretKey = "vlsProduct#2024";
-
-  // const encrypt = (text) => {
-  //   return CryptoJS.AES.encrypt(text, secretKey).toString();
-  // };
-
-  // const decrypt = (cipherText) => {
-  //   const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
-  //   return bytes.toString(CryptoJS.enc.Utf8);
-  // };
 
   // Function to handle the form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (email === "" || password === "")
-      return alert("Please fill in all fields");
-
-    // const encryptedPassword = encrypt(password);
+      return toast.warn('Please fill in all fields', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });      
 
     try {
       const response = await axios.post("http://localhost:6500/login", {
@@ -82,14 +79,38 @@ function Login(props) {
         }
       } else {
         deleteCookie("email");
-        alert("Invalid credentials");
+        return toast.error('Invalid credentials', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });  
       }
     } catch (error) {
-      console.error(
-        "Error:",
-        error.response ? error.response.data : error.message
-      );
-      alert(error.response ? error.response.data.message : error.message);
+
+//       console.error(
+//         "Error:",
+//         error.response ? error.response.data : error.message
+//       );
+//       alert(error.response ? error.response.data.message : error.message);
+      console.error("Error:", error.response ? error.response.data : error.message);//this was only "error" in the master branch, yuval changed it, may need to change back
+      return toast.error('Error logging in. Please try again.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
+
     }
   };
   const handleForgotPass = () => {
@@ -97,6 +118,8 @@ function Login(props) {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="form-container sign-in-container">
       <form onSubmit={handleSubmit}>
         <div
@@ -136,6 +159,7 @@ function Login(props) {
       </form>
       {message && <p>{message}</p>}
     </div>
+    </>
   );
 }
 
