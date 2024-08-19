@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
       else {
         res
           .status(400)
-          .json({ success: false, message: "Wrong Password MADAFAKA" });
+          .json({ success: false, message: "Wrong Password" });
       }
     } else {
       res.status(401).json({ success: false, message: "Invalid credentials" });
