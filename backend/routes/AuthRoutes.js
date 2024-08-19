@@ -70,8 +70,12 @@ router.put("/user/:email", async (req, res) => {
       res.status(200).json({ success: true, user: updatedUser });
     } else {
       res.status(404).json({ success: false, message: "User not found" });
-      
-  });
+      }
+  } catch (error) {
+    console.error("Error updating user information:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
   router.delete('/user/:email', async (req, res) => {
     try {
       const email = req.params.email;
