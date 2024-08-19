@@ -32,6 +32,7 @@ const transactionSchema = new mongoose.Schema({
   },
   date: String,
   amountPayments: String,
+  conformationCode: String,
   file:  mongoose.Schema.Types.ObjectId,
 });
 
