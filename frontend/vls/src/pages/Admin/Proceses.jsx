@@ -4,9 +4,8 @@ import Sidebar from "./componants/sideBar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./stylesAdmin.css";
-// <<<<<<< Yhonatan
-// import EditProceses from "./EditProceses";
-// import Cookies from "js-cookie";
+ import EditProceses from "./EditProceses";
+ import Cookies from "js-cookie";
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert';
