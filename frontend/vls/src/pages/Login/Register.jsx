@@ -1,18 +1,21 @@
 import React from "react";
 import axios from "axios";
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 // Register component to display the registration form
 function Register() {
+  const navigate = useNavigate();
   const [state, setState] = React.useState({
     name: "",
     email: "",
     password: "",
     country: "",
     company: "",
-    sector: ""
+    sector: "",
   });
   // Handel changes on the inputs
   const handleChange = (evt) => {
@@ -20,22 +23,55 @@ function Register() {
     console.log(evt.target);
     setState({
       ...state,
-      [name]: value
+      [name]: value,
     });
   };
   // check for password that contain symbols
   const passwordContainsSymbols = (password) => {
-    const symbols = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '-', '=', '[', ']', '{', '}', ';', ':', "'", '"', '\\', '|', ',', '.', '<', '>', '/', '?'];
-    return symbols.some(symbol => password.includes(symbol));
+    const symbols = [
+      "!",
+      "@",
+      "#",
+      "$",
+      "%",
+      "^",
+      "&",
+      "*",
+      "(",
+      ")",
+      "_",
+      "+",
+      "-",
+      "=",
+      "[",
+      "]",
+      "{",
+      "}",
+      ";",
+      ":",
+      "'",
+      '"',
+      "\\",
+      "|",
+      ",",
+      ".",
+      "<",
+      ">",
+      "/",
+      "?",
+    ];
+    return symbols.some((symbol) => password.includes(symbol));
   };
   // check for password that contain numbers
   const passwordContainsnNumbers = (password) => {
-    const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    return numbers.some(number => password.includes(number));
+    const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    return numbers.some((number) => password.includes(number));
   };
   // Function to handle the form submit
   const handleOnSubmit = async (evt) => {
     evt.preventDefault();
+
+
     if(!state.name || !state.email || !state.password || !state.country || !state.company) return toast.error("Please fill in all fields. if you don't have an apartment number, please fill in 0.", {
       position: "top-right",
       autoClose: 2500,
@@ -95,6 +131,7 @@ function Register() {
     return;
   }
     catch (error) {
+
       console.error("Error:", error);
       toast.error('internal error on server, please try later.', {
         position: "top-right",
@@ -116,7 +153,7 @@ function Register() {
         password: state.password,
         country: state.country,
         company: state.company,
-        sector: state.sector
+        sector: state.sector,
       });
       setState({
         name: "",
@@ -124,8 +161,10 @@ function Register() {
         password: "",
         country: "",
         company: "",
-        sector: ""
+        sector: "",
       });
+
+
       toast.success('User created successfully', {
         position: "top-right",
         autoClose: 2500,
@@ -137,6 +176,7 @@ function Register() {
         theme: "colored",
         transition: Slide,
       });
+
     } catch (error) {
       console.error("Error:", error);
     }
@@ -147,7 +187,9 @@ function Register() {
     <ToastContainer />
     <div className="form-container sign-up-container">
       <form onSubmit={handleOnSubmit}>
-        <h1 className="titleb" style={{fontSize: "48px"}}>Create Account</h1>
+        <h1 className="titleb" style={{ fontSize: "48px" }}>
+          Create Account
+        </h1>
         <input
           type="text"
           name="name"
@@ -183,8 +225,13 @@ function Register() {
           onChange={handleChange}
           placeholder="Company"
         />
-        <FormControl fullWidth style={{marginBottom:'10px',marginTop:'10px'}}>
-          <InputLabel style = {{color:'white'}}id="sector-select-label">Sector</InputLabel>
+        <FormControl
+          fullWidth
+          style={{ marginBottom: "10px", marginTop: "10px" }}
+        >
+          <InputLabel style={{ color: "white" }} id="sector-select-label">
+            Sector
+          </InputLabel>
           <Select
             labelId="sector-select-label"
             id="sector-select"
