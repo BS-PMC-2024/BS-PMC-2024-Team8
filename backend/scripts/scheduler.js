@@ -181,7 +181,7 @@ async function processCommunications(process) {
   const top10Percent = sortedPeople.slice(0, top10PercentCount);
   const rest = sortedPeople.slice(top10PercentCount);
   // Schedule sending messages to the top 10% every 2  minutes
-   cron.schedule('*/2 * * * *', async () => {
+   cron.schedule('* * * * *', async () => {
      console.log(`Sending messages to top 10% for strategy ${process.strategy}`);
      console.log(top10Percent);
      await sendMessages(top10Percent);
