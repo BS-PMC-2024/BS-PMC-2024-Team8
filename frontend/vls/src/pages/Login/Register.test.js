@@ -5,6 +5,7 @@ import Register from './Register';
 import { ThemeProvider } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 import { toast } from 'react-toastify';
+import { MemoryRouter } from 'react-router-dom'; // Import MemoryRouter
 
 // Mock axios
 jest.mock('axios');
@@ -31,7 +32,12 @@ jest.mock('@mui/material', () => ({
 const theme = createTheme();
 
 const customRender = (ui, options) =>
-  render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>, options);
+  render(
+    <MemoryRouter>
+      <ThemeProvider theme={theme}>{ui}</ThemeProvider>
+    </MemoryRouter>, 
+    options
+  );
 
 describe('Register Component', () => {
   beforeEach(() => {
