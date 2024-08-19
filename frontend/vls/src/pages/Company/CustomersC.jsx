@@ -45,7 +45,8 @@ const CustomersC = () => {
           "http://localhost:6500/check-permission",
           { email }
         );
-        if (!response.data.permission === "company") {
+        
+        if (response.data.data.premission !== "company") {
           navigate("/", { replace: true });
         }
       } catch (error) {

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast,Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from "./assets/logo.png";
+// import { encrypt } from "../../../../../backend/scripts/encryption";
 // Login component
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -40,6 +41,7 @@ function Login(props) {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
+
   // Function to handle the form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,11 +57,13 @@ function Login(props) {
         theme: "colored",
         transition: Slide,
       });      
+
     try {
       const response = await axios.post("http://localhost:6500/login", {
         email,
         password,
       });
+      console.log(email, password);
       console.log(response.data.data);
       if (response.data.data.premission) {
         if (!getCookie(email)) {
@@ -88,7 +92,13 @@ function Login(props) {
         });  
       }
     } catch (error) {
-      console.error("Error:", error);
+
+//       console.error(
+//         "Error:",
+//         error.response ? error.response.data : error.message
+//       );
+//       alert(error.response ? error.response.data.message : error.message);
+      console.error("Error:", error.response ? error.response.data : error.message);//this was only "error" in the master branch, yuval changed it, may need to change back
       return toast.error('Error logging in. Please try again.', {
         position: "top-right",
         autoClose: 2500,
@@ -100,6 +110,7 @@ function Login(props) {
         theme: "colored",
         transition: Slide,
       });  
+
     }
   };
   const handleForgotPass = () => {

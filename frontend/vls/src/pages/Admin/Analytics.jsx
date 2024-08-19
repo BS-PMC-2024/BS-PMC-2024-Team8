@@ -56,7 +56,7 @@ const Analytics = () => {
           { email }
         );
 
-        if (!response.data.data.premission == "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
@@ -179,6 +179,7 @@ const Analytics = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get('http://localhost:6500/alltransactions');
+        console.log('Transactions Response:', response.data); // Add this line
         const transactions = response.data.transactions;
         const cityCount = {};
         const ageCount = {};
@@ -385,6 +386,7 @@ const Analytics = () => {
                 data={cities}
                 dataKey='value'
                 stroke='#fff'
+                testid='citiesCheck'
               >
                 {cities.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -7,6 +7,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 import Sidebar from '../Admin/componants/sideBar'
+import { Button } from '@mui/material';
 
 function HomeC() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ function HomeC() {
   const [bestDiscount, setBestDiscount] = useState([]);
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
   const [ClientNumber, setClientNumber] = useState(0);
+
+
   useEffect(() => {
     const checkCompanyPermission = async () => {
       const email = Cookies.get('email');
@@ -26,7 +29,7 @@ function HomeC() {
       }
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
-        if (!response.data.premission == "company") {
+        if (response.data.data.premission !== "company") {
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -222,6 +225,24 @@ function HomeC() {
             </ResponsiveContainer>
           </div>
         </div>
+
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLScDccd__U8f_hx6BIzE_m8WcswO7rZ00FWP5u0HW4mB9RlUCw/viewform", "_blank")}
+            style={{
+              position: 'fixed',
+              bottom: '20px',
+              left: '20px',
+              zIndex: 1000,
+            }}
+          >
+            Take Our Survey
+          </Button>
+
+        </div>
+ 
       </main>
     </div>
   );
