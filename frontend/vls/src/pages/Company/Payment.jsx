@@ -70,7 +70,7 @@ const Payment = () => {
       }
       return code;
     }
-    const finalDebt = debtValue - (debtValue * discountValue);
+    const finalDebt = parseInt(debtValue - (debtValue * discountValue))+'';
     setPaymentData({
       name: name || '',
       phone: phone || '',
