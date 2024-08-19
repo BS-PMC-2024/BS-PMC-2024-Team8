@@ -74,6 +74,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     "/processAdmin": "#dc3545",
     "/analyticsAdmin": "#4CAF50",
     "/customersAdmin": "#17a2b8",
+    "/Clients": "#D4AF37",
     "/contactAdmin": "#ff6f61",
   };
 

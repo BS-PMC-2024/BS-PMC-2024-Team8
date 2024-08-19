@@ -33,7 +33,7 @@ function Contact() {
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
 
-        if (!response.data.permission === "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -57,7 +57,7 @@ function Contact() {
     const getData = async () => {
       try {
         const email = Cookies.get('email');
-        const response = await axios.get(process.env.SERVERENDPOINT+`/${email}`);
+        const response = await axios.get(`http://localhost:6500/${email}`);
         const user = response.data;
         setName(user.data.full_name);
       } catch (error) {

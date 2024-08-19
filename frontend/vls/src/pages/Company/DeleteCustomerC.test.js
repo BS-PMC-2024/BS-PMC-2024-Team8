@@ -26,7 +26,7 @@ describe("DeleteCustomerC Component", () => {
     },
   }));
   beforeEach(() => {
-    // Mock alert function
+
 
     useLocation.mockReturnValue({ state: { person: mockPerson } });
     useNavigate.mockReturnValue(mockNavigate);
@@ -80,6 +80,7 @@ describe("DeleteCustomerC Component", () => {
     );
 
     await waitFor(() =>
+
       expect(toast.success)
     );
   });
@@ -95,6 +96,7 @@ describe("DeleteCustomerC Component", () => {
     fireEvent.click(submitButton);
 
     await waitFor(() =>
+
       expect(toast.error)
     );
   });

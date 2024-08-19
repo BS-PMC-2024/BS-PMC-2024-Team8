@@ -33,6 +33,7 @@ function Home() {
   const [MoneyCollected, setMoneyCollected] = useState(0);
   const [topActive, setTopActive] = useState([]);
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
+  
   useEffect(() => {
     const checkAdminPermission = async () => {
       const email = Cookies.get("email");
@@ -47,7 +48,7 @@ function Home() {
           { email }
         );
 
-        if (!response.data.data.premission == "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
