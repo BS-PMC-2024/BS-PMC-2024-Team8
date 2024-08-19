@@ -7,9 +7,7 @@ const { encrypt, decrypt } = require("../scripts/encryption");
 router.post("/login", async (req, res) => {
   const password = req.body.password;
   const email = req.body.email;
-  // const encryptedPassword = await encrypt(password);
   console.log("password: " + password);
-  // console.log("new password: " + encryptedPassword);
 
   try {
     const user = await User.findOne({ email });
