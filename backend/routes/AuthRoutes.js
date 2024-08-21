@@ -55,7 +55,21 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+router.put("/user/byid/:_id", async (req, res) => {
+  const _id = req.params._id;
+  const updatedData = req.body;
 
+  try {
+    const updatedUser = await User.findByIdAndUpdate(_id, updatedData, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.status(200).json({ success: true, user: updatedData });
+  } catch (error) {
+    console.error("Error updating User:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 // Endpoint to update user information
 router.put("/user/:email", async (req, res) => {
   try {

@@ -37,7 +37,7 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd .. && cd .. && cd backend && node server.js",
-    "client": "cross-env && HTTPS=true && SSL_CRT_FILE=./certs/cert.crt && SSL_KEY_FILE=./certs/cert.key && react-scripts start",
+    "client": "HTTPS=true && SSL_CRT_FILE=./certs/mylocalhost.pem && SSL_KEY_FILE=./certs/mylocalhost.key && react-scripts start",
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject"
