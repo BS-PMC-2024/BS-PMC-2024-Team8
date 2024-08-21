@@ -2,31 +2,26 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const { encrypt, decrypt } = require("../scripts/encryption");
+const bcrypt = require("bcrypt");
 
 // Handle login request
 router.post("/login", async (req, res) => {
-  const password = req.body.password;
-  const email = req.body.email;
-  console.log("password: " + password);
+  const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-    console.log(user);
+    console.log("password + " + password);
+    console.log("password user  + " + user.password);
     if (user) {
-      console.log(password);
-      console.log(user.password);
-      const match = await decrypt(password, user.password);
-      if (match) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      
+      if (isMatch) {
         res.json({ success: true, message: "Credentials found", data: user });
-      }
-      // wrong password
-      else {
-        res
-          .status(400)
-          .json({ success: false, message: "Wrong Password" });
+      } else {
+        res.status(400).json({ success: false, message: "Wrong Password" });
       }
     } else {
-      res.status(401).json({ success: false, message: "Invalid credentials" });
+      res.status(400).json({ success: false, message: "User not found" });
     }
 
   } catch (error) {
@@ -41,9 +36,6 @@ router.post("/register", async (req, res) => {
   userData.premission = "company";
   console.log("password: " + userData.password);
   userData.password = await encrypt(userData.password);
-
-  console.log("new password: " + userData.password);
-
   try {
     const newUser = new User(userData);
     await newUser.save();
@@ -55,7 +47,21 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+router.put("/user/byid/:_id", async (req, res) => {
+  const _id = req.params._id;
+  const updatedData = req.body;
 
+  try {
+    const updatedUser = await User.findByIdAndUpdate(_id, updatedData, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.status(200).json({ success: true, user: updatedData });
+  } catch (error) {
+    console.error("Error updating User:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 // Endpoint to update user information
 router.put("/user/:email", async (req, res) => {
   try {

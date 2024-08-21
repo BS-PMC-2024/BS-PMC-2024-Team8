@@ -133,17 +133,6 @@ function Register() {
     catch (error) {
 
       console.error("Error:", error);
-      toast.error('internal error on server, please try later.', {
-        position: "top-right",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Slide,
-      });
 
     }
     try {
@@ -163,8 +152,7 @@ function Register() {
         company: "",
         sector: "",
       });
-
-
+      if(response.status === 200) return
       toast.success('User created successfully', {
         position: "top-right",
         autoClose: 2500,
@@ -184,7 +172,6 @@ function Register() {
 
   return (
     <>
-    <ToastContainer />
     <div className="form-container sign-up-container">
       <form onSubmit={handleOnSubmit}>
         <h1 className="titleb" style={{ fontSize: "48px" }}>
