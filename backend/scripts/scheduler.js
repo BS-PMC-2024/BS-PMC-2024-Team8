@@ -171,45 +171,53 @@ async function sendMessages(people) {
     }
   }
 }
+const scheduledProcesses = new Set(); // Track processes that already have cron jobs
 
 async function processCommunications(process) {
+  if (scheduledProcesses.has(process._id.toString())) {
+    return; // Skip if the process already has a scheduled cron job
+  }
+
   const people = await People.find({ file: process.file }).exec();
   const sortedPeople = await applyStrategy(people, process.strategy);
 
-  // Split people into top 10% and the rest
   const top10PercentCount = Math.ceil(sortedPeople.length * 0.1);
   const top10Percent = sortedPeople.slice(0, top10PercentCount);
   const rest = sortedPeople.slice(top10PercentCount);
-  // Schedule sending messages to the top 10% every 2  minutes
-   cron.schedule('* * * * *', async () => {
-     console.log(`Sending messages to top 10% for strategy ${process.strategy}`);
-     console.log(top10Percent);
-     await sendMessages(top10Percent);
-   });
+
+  // Schedule sending messages to the top 10% every 2 minutes
+  cron.schedule('*/2 * * * *', async () => {
+    console.log(`Sending messages to top 10% for strategy ${process.strategy}`);
+    await sendMessages(top10Percent);
+  });
 
   // Schedule sending messages to the rest every 10 minutes
-   cron.schedule('*/10 * * * *', async () => {
-     console.log(`Sending messages to the rest for strategy ${process.strategy}`);
-     await sendMessages(rest);
-   });
+  cron.schedule('*/10 * * * *', async () => {
+    console.log(`Sending messages to the rest for strategy ${process.strategy}`);
+    await sendMessages(rest);
+  });
+
+  scheduledProcesses.add(process._id.toString());
+  console.log(`Cron job scheduled for process ${process._id}`);
 }
 
-async function sendCommunications() {
+async function checkAndScheduleCommunications() {
   try {
-    const processes = await Process.find({ status: 'opened' });
-    // Map each process to a call to processCommunications and collect promises
+    const processes = await Process.find({ status: 'opened' }).exec();
     const communicationPromises = processes.map(process => processCommunications(process));
-    // Wait for all promises to resolve simultaneously
     await Promise.all(communicationPromises);
   } catch (error) {
-    console.error('Error fetching people:', error);
+    console.error('Error fetching processes:', error);
   }
 }
 
-
 function startScheduler() {
-    sendCommunications();
-    console.log('Scheduler started');
-}
+  // Check for new processes every minute
+  cron.schedule('* * * * *', async () => {
+    console.log('Checking for new processes...');
+    await checkAndScheduleCommunications();
+  });
 
+  console.log('Scheduler started');
+}
 module.exports = { startScheduler };

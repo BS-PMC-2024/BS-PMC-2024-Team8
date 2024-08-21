@@ -37,7 +37,7 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd .. && cd .. && cd backend && node server.js",
-    "client": "react-scripts start",
+    "client": "cross-env && HTTPS=true && SSL_CRT_FILE=./certs/cert.crt && SSL_KEY_FILE=./certs/cert.key && react-scripts start",
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject"
@@ -68,11 +68,15 @@
     "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.8",
     "@babel/preset-react": "^7.24.7",
+    "@eslint/js": "^9.9.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^15.0.7",
     "axios": "^1.7.2",
     "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^27.5.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.35.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1"
   }
