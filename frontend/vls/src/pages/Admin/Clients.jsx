@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Header from "../Admin/componants/Header";
-import Sidebar from "../Admin/componants/sideBar";
+import Header from '../Admin/componants/Header';
+import Sidebar from '../Admin/componants/sideBar';
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";

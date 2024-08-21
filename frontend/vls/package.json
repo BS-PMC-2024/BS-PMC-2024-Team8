@@ -14,7 +14,6 @@
     "@react-icons/all-files": "^4.1.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.2",
-    "concurrently": "^8.2.2",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "emailjs-com": "^3.2.0",
@@ -37,9 +36,11 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd .. && cd .. && cd backend && node server.js",
-    "client": "HTTPS=true && SSL_CRT_FILE=./certs/mylocalhost.pem && SSL_KEY_FILE=./certs/mylocalhost.key && react-scripts start",
+    "client": "cross-env HTTPS=flase SSL_CRT_FILE=./certs/cert.crt SSL_KEY_FILE=./certs/cert.key react-scripts start",
     "build": "react-scripts build",
     "test": "jest",
+    "test:coverage": "jest --coverage --watchAll=false",
+    "start-and-test": "concurrently \"npm run server\" \"npm run client\" \"npm run test:coverage\"",
     "eject": "react-scripts eject"
   },
   "docker": {
@@ -74,6 +75,7 @@
     "axios": "^1.7.2",
     "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^27.5.1",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.35.0",

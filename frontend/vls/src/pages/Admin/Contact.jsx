@@ -97,7 +97,7 @@ function Contact() {
     if (!phoneRegex.test(phone)) {
       return;
     }
-    if(userEmail === "N") 
+    if(userEmail === "None") 
     {
       setEmailError("Please chose a company you want to send Email to")
       return;
