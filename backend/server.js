@@ -18,7 +18,7 @@ mongoose
   )
   .then(async () => {
     console.log("Connected to MongoDB");
-    startScheduler();
+    //startScheduler();
   })
   .catch((err) => console.error("Error connecting to MongoDB:", err));
 
