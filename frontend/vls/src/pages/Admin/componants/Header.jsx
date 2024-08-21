@@ -11,12 +11,13 @@ function Header({ OpenSidebar }) {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
-          <div style={{ textAlign: 'center', padding: '20px',background:'#222831',borderRadius:'3%' }}>
+          <div style={{ textAlign: 'center', padding: '20px', background: '#222831', borderRadius: '3%' }}>
             <p style={{ fontSize: '16px', marginBottom: '15px' }}>
               Are you sure you want to LogOut?
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
               <button
+                data-testid='yes'
                 onClick={() => {
                   onClose();
                   Cookies.remove('email');
@@ -34,6 +35,7 @@ function Header({ OpenSidebar }) {
                 Yes
               </button>
               <button
+                data-testid='no'
                 onClick={() => onClose()}
                 style={{
                   padding: '8px 16px',
@@ -57,12 +59,12 @@ function Header({ OpenSidebar }) {
   return (
     <header className='header'>
       <ToastContainer />
-      <div className='menu-icon'>
+      <div className='menu-icon' data-testid="menu-icon">
         <BsJustify className='icon' onClick={OpenSidebar} />
       </div>
       <div className='header-left'>
       </div>
-      <div className='header-right'>
+      <div className='header-right' data-testid="power-icon">
         <BsPower className='icon' onClick={handleLogOut} />
       </div>
     </header>

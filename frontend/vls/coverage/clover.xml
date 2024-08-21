@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1724252772449" clover="3.2.0">
-  <project timestamp="1724252772449" name="All files">
-    <metrics statements="1401" coveredstatements="1040" conditionals="421" coveredconditionals="224" methods="308" coveredmethods="212" elements="2130" coveredelements="1476" complexity="0" loc="1401" ncloc="1401" packages="5" files="24" classes="24"/>
+<coverage generated="1724253847581" clover="3.2.0">
+  <project timestamp="1724253847582" name="All files">
+    <metrics statements="1401" coveredstatements="1046" conditionals="421" coveredconditionals="224" methods="308" coveredmethods="216" elements="2130" coveredelements="1486" complexity="0" loc="1401" ncloc="1401" packages="5" files="24" classes="24"/>
     <package name="vls">
       <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="fileMock.js" path="C:\jonatan\REACT\manageProject\BS-PMC-2024-Team8\frontend\vls\fileMock.js">
@@ -638,17 +638,17 @@
       </file>
     </package>
     <package name="vls.src.pages.Admin.componants">
-      <metrics statements="30" coveredstatements="23" conditionals="8" coveredconditionals="6" methods="11" coveredmethods="6"/>
+      <metrics statements="30" coveredstatements="29" conditionals="8" coveredconditionals="6" methods="11" coveredmethods="10"/>
       <file name="Header.jsx" path="C:\jonatan\REACT\manageProject\BS-PMC-2024-Team8\frontend\vls\src\pages\Admin\componants\Header.jsx">
-        <metrics statements="8" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="1"/>
-        <line num="10" count="105" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="37" count="0" type="stmt"/>
-        <line num="57" count="105" type="stmt"/>
+        <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+        <line num="10" count="109" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="59" count="109" type="stmt"/>
       </file>
       <file name="Modal.jsx" path="C:\jonatan\REACT\manageProject\BS-PMC-2024-Team8\frontend\vls\src\pages\Admin\componants\Modal.jsx">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
