@@ -14,7 +14,6 @@
     "@react-icons/all-files": "^4.1.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.2",
-    "concurrently": "^8.2.2",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "emailjs-com": "^3.2.0",
@@ -40,6 +39,8 @@
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest",
+    "test:coverage": "jest --coverage --watchAll=false", 
+    "start-and-test": "concurrently \"npm run server\" \"npm run client\" \"npm run test:coverage\"",
     "eject": "react-scripts eject"
   },
   "docker": {
@@ -73,6 +74,7 @@
     "axios": "^1.7.2",
     "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^27.5.1",
+    "concurrently": "^8.2.2",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1"
   }

@@ -1,10 +1,12 @@
 // EditCustomerC.test.jsx
 import React from "react";
-import { render, waitFor, fireEvent } from "@testing-library/react";
+import { render, waitFor, fireEvent, act } from "@testing-library/react";
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import EditCustomerC from "./EditCustomerC";
+
+
 
 // Mock useNavigate and useLocation
 jest.mock("react-router-dom", () => ({
@@ -29,18 +31,26 @@ describe("EditCustomerC Component", () => {
     useLocation.mockReturnValue({ state: { person } });
     navigate = jest.fn();
     useNavigate.mockReturnValue(navigate);
+    mock.onPost('http://localhost:6500/check-permission').reply(200, {
+      data: { premission: 'company' }
+    });
   });
 
   afterAll(() => {
     mock.restore();
   });
 
-  test("initial state is set correctly", () => {
-    const { getByLabelText } = render(
-      <MemoryRouter>
-        <EditCustomerC />
-      </MemoryRouter>
-    );
+  test("initial state is set correctly",async () => {
+    let getByLabelText;
+
+    await act(async () => {
+      const renderResult = render(
+        <MemoryRouter>
+          <EditCustomerC />
+        </MemoryRouter>
+      );
+      getByLabelText = renderResult.getByLabelText;
+    });
 
     const nameInput = getByLabelText("Name:");
     const mailInput = getByLabelText("Mail:");
@@ -53,12 +63,17 @@ describe("EditCustomerC Component", () => {
     expect(phoneInput.value).toBe(person.Phone);
   });
 
-  test("handleChange updates state correctly", () => {
-    const { getByLabelText } = render(
-      <MemoryRouter>
-        <EditCustomerC />
-      </MemoryRouter>
-    );
+  test("handleChange updates state correctly",async () => {
+    let getByLabelText;
+
+    await act(async () => {
+      const renderResult = render(
+        <MemoryRouter>
+          <EditCustomerC />
+        </MemoryRouter>
+      );
+      getByLabelText = renderResult.getByLabelText;
+    });
 
     const nameInput = getByLabelText("Name:");
     fireEvent.change(nameInput, {
@@ -71,11 +86,16 @@ describe("EditCustomerC Component", () => {
   test("handleSave makes a PUT request and navigates on success", async () => {
     mock.onPut("http://localhost:6500/person/1").reply(200);
 
-    const { getByText } = render(
-      <MemoryRouter>
-        <EditCustomerC />
-      </MemoryRouter>
-    );
+    let getByText;
+
+    await act(async () => {
+      const renderResult = render(
+        <MemoryRouter>
+          <EditCustomerC />
+        </MemoryRouter>
+      );
+      getByText = renderResult.getByText;
+    });
 
     const saveButton = getByText("Save");
     fireEvent.click(saveButton);
@@ -96,12 +116,17 @@ describe("EditCustomerC Component", () => {
 
   });
 
-  test("handles cancel button click", () => {
-    const { getByText } = render(
-      <MemoryRouter>
-        <EditCustomerC />
-      </MemoryRouter>
-    );
+  test("handles cancel button click",async () => {
+    let getByText;
+
+    await act(async () => {
+      const renderResult = render(
+        <MemoryRouter>
+          <EditCustomerC />
+        </MemoryRouter>
+      );
+      getByText = renderResult.getByText;
+    });
 
     const cancelButton = getByText("Cancel");
     fireEvent.click(cancelButton);
