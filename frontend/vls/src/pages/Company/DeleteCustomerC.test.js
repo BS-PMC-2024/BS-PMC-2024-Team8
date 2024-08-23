@@ -1,11 +1,12 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteCustomerC from "./DeleteCustomerC";
 import emailjs from "@emailjs/browser";
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
-jest.mock("axios");
+jest.mock('axios');
 jest.mock("react-router-dom", () => ({
   useLocation: jest.fn(),
   useNavigate: jest.fn(),
@@ -27,30 +28,35 @@ describe("DeleteCustomerC Component", () => {
   }));
   beforeEach(() => {
 
-
     useLocation.mockReturnValue({ state: { person: mockPerson } });
     useNavigate.mockReturnValue(mockNavigate);
-    
+    axios.post.mockResolvedValue({ data: {data: { premission: 'company' } } });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  test("renders DeleteCustomerC component", () => {
-    render(<DeleteCustomerC />);
+ test("renders DeleteCustomerC component", async () => {
+    await act(async () => {
+      render(<DeleteCustomerC />);
+    });
     expect(screen.getByText("Delete Debtor")).toBeInTheDocument();
   });
 
-  test("handles input change", () => {
-    render(<DeleteCustomerC />);
+  test("handles input change",async  () => {
+    await act(async () => {
+      render(<DeleteCustomerC />);
+    });
     const textField = screen.getByLabelText(/Message/i);
     fireEvent.change(textField, { target: { value: "Test message" } });
     expect(textField.value).toBe("Test message");
   });
 
-  test("handles cancel button click", () => {
-    render(<DeleteCustomerC />);
+  test("handles cancel button click",async  () => {
+    await act(async () => {
+      render(<DeleteCustomerC />);
+    });
     const cancelButton = screen.getByText("Cancel");
     fireEvent.click(cancelButton);
     expect(mockNavigate).toHaveBeenCalledWith("/customersCompany");
@@ -59,7 +65,9 @@ describe("DeleteCustomerC Component", () => {
   test("handles submit button click", async () => {
     emailjs.send.mockResolvedValueOnce({ status: 200 });
 
-    render(<DeleteCustomerC />);
+    await act(async () => {
+      render(<DeleteCustomerC />);
+    });
     const textField = screen.getByLabelText(/Message/i);
     fireEvent.change(textField, { target: { value: "Test message" } });
 
@@ -88,7 +96,9 @@ describe("DeleteCustomerC Component", () => {
   test("displays error message on email send failure", async () => {
     emailjs.send.mockRejectedValueOnce(new Error("Failed to send email"));
 
-    render(<DeleteCustomerC />);
+    await act(async () => {
+      render(<DeleteCustomerC />);
+    });
     const textField = screen.getByLabelText(/Message/i);
     fireEvent.change(textField, { target: { value: "Test message" } });
 
