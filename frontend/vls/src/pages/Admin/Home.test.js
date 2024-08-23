@@ -47,7 +47,7 @@ describe('Home Component', () => {
     jest.clearAllMocks();
     mockNavigate.mockClear();
     Cookies.get.mockReturnValue('test@example.com');
-    axios.post.mockResolvedValue({ data: { permission: 'admin' } });
+    axios.post.mockResolvedValue({ data: {data: { premission: 'admin' } } });
     axios.get.mockImplementation((url) => {
       if (url === 'http://localhost:6500/allusers') {
         return Promise.resolve({ data: { users: [{ id: 1 }, { id: 2 }] } });

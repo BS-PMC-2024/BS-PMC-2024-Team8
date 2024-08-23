@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Home from "../../Admin/Home";
 import Proceses from "../../Admin/Proceses";
@@ -21,7 +21,6 @@ jest.mock("react-icons/bs", () => ({
   BsPeopleFill: () => <div data-testid="icon-customers">CustomersIcon</div>,
   BsEnvelopeFill: () => <div data-testid="icon-contact">ContactIcon</div>,
   BsPersonBoundingBox: () => <div data-testid="icon-clients">ClientsIcon</div>,
-
 }));
 
 jest.mock("axios");
@@ -41,7 +40,6 @@ const renderWithRouter = (component, { route = "/" } = {}) => {
         <Route path="/contactAdmin" element={<Contact />} />
         <Route path="/customersAdmin" element={<Customers />} />
         <Route path="/analyticsAdmin" element={<Analytics />} />
-        
       </Routes>
     </MemoryRouter>
   );
@@ -54,9 +52,12 @@ describe("Sidebar component", () => {
   });
 
   test("renders admin menu items", async () => {
-    renderWithRouter(
-      <Sidebar openSidebarToggle={true} OpenSidebar={mockOpenSidebar} />
-    );
+    await act(async () => {
+      renderWithRouter(
+        <Sidebar openSidebarToggle={true} OpenSidebar={mockOpenSidebar} />
+      );
+    });
+
     expect(await screen.findByTestId("icon-dashboard")).toBeInTheDocument();
     expect(await screen.findByTestId("icon-process")).toBeInTheDocument();
     expect(await screen.findByTestId("icon-analytics")).toBeInTheDocument();
@@ -65,19 +66,26 @@ describe("Sidebar component", () => {
     expect(await screen.findByTestId("icon-clients")).toBeInTheDocument();
   });
 
-  test("toggles sidebar responsiveness", () => {
-    const { container } = renderWithRouter(
-      <Sidebar openSidebarToggle={true} OpenSidebar={mockOpenSidebar} />
-    );
+  test("toggles sidebar responsiveness", async () => {
+    let container;
+    await act(async () => {
+      container = renderWithRouter(
+        <Sidebar openSidebarToggle={true} OpenSidebar={mockOpenSidebar} />
+      ).container;
+    });
+
     expect(container.querySelector("#sidebar")).toHaveClass(
       "sidebar-responsive"
     );
   });
 
-  test("calls OpenSidebar when close icon is clicked", () => {
-    renderWithRouter(
-      <Sidebar openSidebarToggle={false} OpenSidebar={mockOpenSidebar} />
-    );
+  test("calls OpenSidebar when close icon is clicked", async () => {
+    await act(async () => {
+      renderWithRouter(
+        <Sidebar openSidebarToggle={false} OpenSidebar={mockOpenSidebar} />
+      );
+    });
+
     fireEvent.click(screen.getByTestId("close-icon"));
     expect(mockOpenSidebar).toHaveBeenCalled();
   });

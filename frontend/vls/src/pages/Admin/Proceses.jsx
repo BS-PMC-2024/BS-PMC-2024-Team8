@@ -56,7 +56,7 @@ function Proceses() {
         setProcesses(response.data.processes);
         setFilteredProcesses(response.data.processes); // Initially, all processes are shown
       } catch (error) {
-        console.error("Error fetching processes:", error);
+        // console.error("Error fetching processes:", error);
         toast.error("Failed to fetch processes", {
           position: "top-right",
           autoClose: 2500,
