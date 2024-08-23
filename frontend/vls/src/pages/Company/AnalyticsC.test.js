@@ -45,7 +45,7 @@ describe('Analytics Component', () => {
       expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
     });
 
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/clients/${companyID}`);
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/transactions/${companyID}`);
   });
 
   test('fetches and processes data correctly for charts', async () => {
