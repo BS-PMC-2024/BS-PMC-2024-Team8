@@ -114,16 +114,7 @@ function Home() {
           .slice(0, 5);
 
         setTopActive(sortedCompanies);
-
-        const sortedMonthlyMoney = Object.entries(monthlyMoney)
-          .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
-          .sort((a, b) => {
-            const [monthA, yearA] = a.monthYear.split("/").map(Number);
-            const [monthB, yearB] = b.monthYear.split("/").map(Number);
-            return yearA !== yearB ? yearA - yearB : monthA - monthB;
-          });
-
-        setMonthlyMoneyCollected(sortedMonthlyMoney);
+        
       } catch (error) {
         console.error("Error fetching processes:", error);
       }
@@ -131,6 +122,44 @@ function Home() {
     fetchProcesses();
   }, []);
 
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get('http://localhost:6500/alltransactions');
+        console.log('Transactions Response:', response.data); // Add this line
+        const transactions = response.data.transactions;
+        // Group transactions by month/year and sum the debt
+        const monthlyMoneyMap = transactions.reduce((acc, transaction) => {
+          const [day, month, year] = transaction.date.split('/').map(Number);
+          const monthYear = `${month}/${year}`;
+          const debtAmount = parseFloat(transaction.debt); // Ensure debt is a number
+  
+          if (!acc[monthYear]) {
+            acc[monthYear] = 0;
+          }
+  
+          acc[monthYear] += debtAmount;
+  
+          return acc;
+        }, {});
+  
+        const sortedMonthlyMoney = Object.entries(monthlyMoneyMap)
+          .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
+          .sort((a, b) => {
+            const [monthA, yearA] = a.monthYear.split('/').map(Number);
+            const [monthB, yearB] = b.monthYear.split('/').map(Number);
+            return yearA !== yearB ? yearA - yearB : monthA - monthB;
+          });
+
+        setMonthlyMoneyCollected(sortedMonthlyMoney);
+  
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+    
+    fetchTransactions();
+  }, []);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
