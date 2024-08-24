@@ -5,7 +5,6 @@ const Process = require('../models/Process');
 const router = express.Router();
 const axios = require('axios');
 const People = require('../models/People');
-const { encrypt } = require('../scripts/encryption');
 
 router.get("/alltransactions", async (req, res) => {
   try {
@@ -34,7 +33,7 @@ router.post('/addTransaction', async (req, res) => {
   try {
     console.log(req.body);
     const newTransaction = new Transaction(req.body);
-    console.log(newTransaction);
+    newTransaction.date = format(new Date(), 'dd/MM/yyyy');
     await newTransaction.save();
     
     let process = await Process.findOne({ file: newTransaction.file });

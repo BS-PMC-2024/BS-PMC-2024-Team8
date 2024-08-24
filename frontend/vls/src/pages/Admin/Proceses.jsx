@@ -4,8 +4,6 @@ import Sidebar from "./componants/sideBar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./stylesAdmin.css";
- import EditProceses from "./EditProceses";
- import Cookies from "js-cookie";
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert';
@@ -23,31 +21,6 @@ function Proceses() {
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
-  useEffect(() => {
-    const checkAdminPermission = async () => {
-      const email = Cookies.get("email");
-
-      if (!email) {
-        navigate("/", { replace: true });
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:6500/check-permission",
-          { email }
-        );
-
-        if (response.data.data.premission !== "admin") {
-          navigate("/", { replace: true });
-        }
-      } catch (error) {
-        console.error("Error checking admin permission:", error);
-        navigate("/", { replace: true });
-      }
-    };
-    checkAdminPermission();
-  }, [navigate]);
-
 
   useEffect(() => {
     const fetchProcesses = async () => {
@@ -56,7 +29,7 @@ function Proceses() {
         setProcesses(response.data.processes);
         setFilteredProcesses(response.data.processes); // Initially, all processes are shown
       } catch (error) {
-        // console.error("Error fetching processes:", error);
+        console.error("Error fetching processes:", error);
         toast.error("Failed to fetch processes", {
           position: "top-right",
           autoClose: 2500,

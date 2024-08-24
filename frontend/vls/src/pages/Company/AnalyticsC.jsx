@@ -26,6 +26,7 @@ import Header from '../Admin/componants/Header';
 
 const Analytics = () => {
   const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
   const [topActive, setTopActive] = useState([]);
   const [monthlyProccessCollected, setMonthlyProccessCollected] = useState([]);
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
@@ -52,6 +53,47 @@ const Analytics = () => {
     }
     return null;
   }
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const company = getCookie("company"); 
+        const response = await axios.get(`http://localhost:6500/clients/${company}`);
+        const users = response.data.clients;
+        console.log("from fetch users");
+        console.log(users);
+        users.sort((a, b) => a.Debt - b.Debt);
+        const groups = {};
+        users.forEach(user => {
+          const debtRange = Math.floor(user.Debt / 1000) * 1000;
+          if (!groups[debtRange]) {
+            groups[debtRange] = 0;
+          }
+          groups[debtRange]++;
+        });
+        setDebtGroups(groups);
+        let maxCount = 0;
+        let topActiveGroup = null;
+        Object.entries(groups).forEach(([debtRange, count]) => {
+          if (count > maxCount) {
+            maxCount = count;
+            topActiveGroup = { debtRange, count };
+          }
+        });
+
+        if (topActiveGroup) {
+          console.log('Top active group:', topActiveGroup);
+          setTopActive(topActiveGroup);
+        }
+        setUsers(users);
+        
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, [refreshTrigger]);
 
   useEffect(() => {
     const fetchProcesses = async () => {
@@ -105,6 +147,16 @@ const Analytics = () => {
           monthlyProccess[monthYear]++;
         });
 
+        const sortedMonthlyMoney = Object.entries(monthlyMoney)
+          .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
+          .sort((a, b) => {
+            const [monthA, yearA] = a.monthYear.split('/').map(Number);
+            const [monthB, yearB] = b.monthYear.split('/').map(Number);
+            return yearA !== yearB ? yearA - yearB : monthA - monthB;
+          });
+
+        setMonthlyMoneyCollected(sortedMonthlyMoney);
+
         const sortedMonthlyProccess = Object.entries(monthlyProccess)
           .map(([monthYear, count]) => ({ monthYear, count }))
           .sort((a, b) => {
@@ -129,13 +181,11 @@ const Analytics = () => {
         const response = await axios.get(`http://localhost:6500/transactions/${company}`);
         const transactions = response.data.transactions;
         console.log(transactions);
-  
         const cityCount = {};
         const ageCount = {};
         const viaCount = {};
         const discountCount = {};
-        const debtorTotals = {}; // To store total debt per debtor
-  
+
         transactions.forEach((transaction) => {
           // Count transactions in each city
           if (transaction.city) {
@@ -145,7 +195,7 @@ const Analytics = () => {
               cityCount[transaction.city] = 1;
             }
           }
-  
+
           // Count ages of each transaction
           if (transaction.age) {
             if (ageCount[transaction.age]) {
@@ -154,7 +204,7 @@ const Analytics = () => {
               ageCount[transaction.age] = 1;
             }
           }
-  
+
           // Count transactions by via
           if (transaction.via) {
             if (viaCount[transaction.via]) {
@@ -163,7 +213,7 @@ const Analytics = () => {
               viaCount[transaction.via] = 1;
             }
           }
-  
+
           // Count transactions by discount
           if (transaction.discount) {
             if (discountCount[transaction.discount]) {
@@ -172,89 +222,46 @@ const Analytics = () => {
               discountCount[transaction.discount] = 1;
             }
           }
-  
-          // Calculate total debt per debtor
-          if (transaction.name) {
-            const debtAmount = parseFloat(transaction.debt); // Ensure debt is a number
-            if (debtorTotals[transaction.name]) {
-              debtorTotals[transaction.name] += debtAmount;
-            } else {
-              debtorTotals[transaction.name] = debtAmount;
-            }
-          }
         });
-  
+
         const cityData = Object.entries(cityCount).map(([name, value]) => ({
           name,
           value,
         }));
-  
+
         setCities(cityData);
-  
+
         const ageData = Object.entries(ageCount).map(([name, value]) => ({
           name,
           value,
         }));
-  
+
         setAges(ageData);
-  
+
         const viaData = Object.entries(viaCount).map(([name, value]) => ({
           name,
           value,
         }));
-  
+
         setBestVia(viaData);
-  
+
         const discountData = Object.entries(discountCount).map(([name, value]) => ({
           name,
           value,
         }));
-  
+
         setBestDiscount(discountData);
-  
-        const monthlyMoneyMap = transactions.reduce((acc, transaction) => {
-          const [day, month, year] = transaction.date.split('/').map(Number);
-          const monthYear = `${month}/${year}`;
-          const debtAmount = parseFloat(transaction.debt); // Ensure debt is a number
-    
-          if (!acc[monthYear]) {
-            acc[monthYear] = 0;
-          }
-    
-          acc[monthYear] += debtAmount;
-    
-          return acc;
-        }, {});
-    
-        const sortedMonthlyMoney = Object.entries(monthlyMoneyMap)
-          .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
-          .sort((a, b) => {
-            const [monthA, yearA] = a.monthYear.split('/').map(Number);
-            const [monthB, yearB] = b.monthYear.split('/').map(Number);
-            return yearA !== yearB ? yearA - yearB : monthA - monthB;
-          });
-  
-        setMonthlyMoneyCollected(sortedMonthlyMoney);
-  
-        const top5Debtors = Object.entries(debtorTotals)
-        .sort((a, b) => b[1] - a[1]) // Sort by total debt in descending order
-        .slice(0, 5) // Get the top 5 debtors
-        .map(([name, totalDebt]) => ({ name, totalDebt })); // Map to the desired format
-      
-      setTopActive(top5Debtors);
-  
+
         console.log('cityData:', cityData);
         console.log('ageData:', ageData);
         console.log('viaData:', viaData);
         console.log('discountData:', discountData);
-        
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     };
     fetchTransactions();
   }, [refreshTrigger]);
-  
 
   useEffect(() => {
     // Set up interval for periodic data fetching
@@ -280,26 +287,26 @@ const Analytics = () => {
           <div> 
             <h3 style={{ textAlign: 'center' }}>Top Debt clients</h3> 
             <ResponsiveContainer width='100%' height={400}>
-            <BarChart
-              data={topActive.map(({ name, totalDebt }) => ({
-                name, // The name of the debtor
-                count: totalDebt // The total debt collected by this debtor
-              }))}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-              barSize={20}
-            >
-              <XAxis dataKey='name' scale='point' padding={{ left: 10, right: 10 }} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <CartesianGrid strokeDasharray='3 3' />
-              <Bar dataKey='count' fill='#8884d8' background={{ fill: "transparent" }} />
-            </BarChart>
+              <BarChart
+                data={Object.entries(debtGroups).map(([debtRange, count]) => ({
+                  name: debtRange.toString(), // Assuming you want to show debt ranges as strings
+                  count: count
+                }))}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+                barSize={20}
+              >
+                <XAxis dataKey='name' scale='point' padding={{ left: 10, right: 10 }} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <CartesianGrid strokeDasharray='3 3' />
+                <Bar dataKey='count' fill='#8884d8'  background={{  fill: "transparent" }}/>
+              </BarChart>
             </ResponsiveContainer>
           </div>
           <div>

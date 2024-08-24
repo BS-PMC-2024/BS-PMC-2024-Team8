@@ -7,7 +7,6 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 import Sidebar from '../Admin/componants/sideBar'
-import { Button } from '@mui/material';
 
 function HomeC() {
   const navigate = useNavigate();
@@ -17,8 +16,6 @@ function HomeC() {
   const [bestDiscount, setBestDiscount] = useState([]);
   const [monthlyMoneyCollected, setMonthlyMoneyCollected] = useState([]);
   const [ClientNumber, setClientNumber] = useState(0);
-
-
   useEffect(() => {
     const checkCompanyPermission = async () => {
       const email = Cookies.get('email');
@@ -29,7 +26,7 @@ function HomeC() {
       }
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
-        if (response.data.data.premission !== "company") {
+        if (!response.data.premission == "company") {
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -70,35 +67,7 @@ function HomeC() {
         setProcessesnumberC(completedProcesses);
         setMoneyCollected(moneyCollected);
 
-      } catch (error) {
-        console.error('Error fetching processes:', error);
-      }
-    };
-    fetchProcesses();
-  }, []);
-  useEffect(() => {
-    const company = Cookies.get('company');
-    const fetchTransactions = async () => {
-      try {
-        const response = await axios.get(`http://localhost:6500/transactions/${company}`);
-        console.log('Transactions Response:', response.data); // Add this line
-        const transactions = response.data.transactions;
-        // Group transactions by month/year and sum the debt
-        const monthlyMoneyMap = transactions.reduce((acc, transaction) => {
-          const [day, month, year] = transaction.date.split('/').map(Number);
-          const monthYear = `${month}/${year}`;
-          const debtAmount = parseFloat(transaction.debt); // Ensure debt is a number
-  
-          if (!acc[monthYear]) {
-            acc[monthYear] = 0;
-          }
-  
-          acc[monthYear] += debtAmount;
-  
-          return acc;
-        }, {});
-  
-        const sortedMonthlyMoney = Object.entries(monthlyMoneyMap)
+        const sortedMonthlyMoney = Object.entries(monthlyMoney)
           .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
           .sort((a, b) => {
             const [monthA, yearA] = a.monthYear.split('/').map(Number);
@@ -107,13 +76,12 @@ function HomeC() {
           });
 
         setMonthlyMoneyCollected(sortedMonthlyMoney);
-  
+
       } catch (error) {
-        console.error('Error fetching transactions:', error);
+        console.error('Error fetching processes:', error);
       }
     };
-    
-    fetchTransactions();
+    fetchProcesses();
   }, []);
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -254,24 +222,6 @@ function HomeC() {
             </ResponsiveContainer>
           </div>
         </div>
-
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLScDccd__U8f_hx6BIzE_m8WcswO7rZ00FWP5u0HW4mB9RlUCw/viewform", "_blank")}
-            style={{
-              position: 'fixed',
-              bottom: '20px',
-              left: '20px',
-              zIndex: 1000,
-            }}
-          >
-            Take Our Survey
-          </Button>
-
-        </div>
- 
       </main>
     </div>
   );

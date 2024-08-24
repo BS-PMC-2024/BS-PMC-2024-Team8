@@ -33,7 +33,7 @@ function Contact() {
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
 
-        if (response.data.data.premission !== "admin") {
+        if (!response.data.permission === "admin") {
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -57,7 +57,7 @@ function Contact() {
     const getData = async () => {
       try {
         const email = Cookies.get('email');
-        const response = await axios.get(`http://localhost:6500/${email}`);
+        const response = await axios.get(process.env.SERVERENDPOINT+`/${email}`);
         const user = response.data;
         setName(user.data.full_name);
       } catch (error) {
@@ -97,7 +97,7 @@ function Contact() {
     if (!phoneRegex.test(phone)) {
       return;
     }
-    if(userEmail === "None") 
+    if(userEmail === "N") 
     {
       setEmailError("Please chose a company you want to send Email to")
       return;

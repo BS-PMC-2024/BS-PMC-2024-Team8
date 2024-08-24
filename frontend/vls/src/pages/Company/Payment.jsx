@@ -27,7 +27,7 @@ const Payment = () => {
   const via = query.get('via');
   const file = query.get('file');
   const initialOptions = {
-    clientId: "AUw64R1RHWdRKv_e7P92hTsbT9gA8L5HZVFjhG-qM0jUhpYqFmj3B2XImLaftht90qgxQTZFzRH1rXML",
+    clientId: "AUw64R1RHWdRKv_e7P92hTsbT9gA8L5HZVFjhG",
     currency: "USD",
     intent: "capture",
 };
@@ -46,7 +46,6 @@ const Payment = () => {
     age: '',
     city: '',
     discount: '',
-    conformationCode: '',
     via: '',
     file: ''
   });
@@ -59,18 +58,7 @@ const Payment = () => {
     if (discount && discount.endsWith('%')) {
       discountValue = parseFloat(discount) / 100;
     }
-    function generateRandomCode() {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let code = '';
-      const codeLength = 20;
-  
-      for (let i = 0; i < codeLength; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        code += characters.charAt(randomIndex);
-      }
-      return code;
-    }
-    const finalDebt = parseInt(debtValue - (debtValue * discountValue))+'';
+    const finalDebt = debtValue - (debtValue * discountValue);
     setPaymentData({
       name: name || '',
       phone: phone || '',
@@ -83,19 +71,30 @@ const Payment = () => {
       debt: finalDebt,
       date: formattedDate,
       expiry_date: '',
-      conformationCode: generateRandomCode(),
       file: file
     });
   }, [name, phone, mail, debt, age, city, cname, discount, via]);
 
+  function generateRandomCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    const codeLength = 20;
+
+    for (let i = 0; i < codeLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    return code;
+  }
 
   const handleSendConfirmation = () => {
     emailjs.init("98g7Qzscyfz-S-J7p");
     const serviceId = "service_lxiaq84";
     const templateId = "template_kzggrep";
+    const generatedCode = generateRandomCode();
     emailjs.send(serviceId, templateId, {
       email: paymentData.mail,
-      code: paymentData.conformationCode,
+      code: generatedCode(),
       name: paymentData.name,
       debt: paymentData.debt,
       company: paymentData.cname,
@@ -198,7 +197,9 @@ const Payment = () => {
     }
 
     try {
+      console.log(paymentData);
       const res = await axios.post('http://localhost:6500/addTransaction', paymentData);
+      console.log(res);
       if (res.status === 200) {
         toast.success(`Payment Successful`, {
           position: "top-right",
@@ -342,33 +343,13 @@ const Payment = () => {
                 }}
                 onApprove={(data, actions) => {
                   return actions.order.capture().then((details) => {
-                    toast.success(`Payment Successful`, {
-                      position: "top-right",
-                      autoClose: 2500,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      theme: "colored",
-                      transition: Slide,
-                    });
+                    alert('Payment Successful');
                     handleSendConfirmation();
                   });
                 }}
                 onError={(err) => {
                   console.error('PayPal Checkout onError', err);
-                  toast.error(`Payment Failed`, {
-                    position: "top-right",
-                    autoClose: 2500,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                    transition: Slide,
-                  });
+                  alert('Payment Failed');
                 }}
             />
         </PayPalScriptProvider>

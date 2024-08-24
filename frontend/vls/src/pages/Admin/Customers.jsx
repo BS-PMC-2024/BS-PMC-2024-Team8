@@ -52,7 +52,7 @@ function CUSTOMERS() {
           { email }
         );
 
-        if (response.data.data.premission !== "admin") {
+        if (!response.data.permission == "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
