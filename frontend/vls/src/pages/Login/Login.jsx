@@ -42,10 +42,10 @@ function Login(props) {
     setPassword(e.target.value);
   };
 
-  // Function to handle the form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email === "" || password === "")
+
+    if (email === "" || password === "") {
       return toast.warn('Please fill in all fields', {
         position: "top-right",
         autoClose: 2500,
@@ -56,30 +56,26 @@ function Login(props) {
         progress: undefined,
         theme: "colored",
         transition: Slide,
-      });      
+      });
+    }
 
     try {
-      const response = await axios.post("http://localhost:6500/login", {
-        email,
-        password,
-      });
-      console.log(email, password);
-      console.log(response.data.data);
-      if (response.data.data.premission) {
-        if (!getCookie(email)) {
-          setCookie("email", email, 30);
-          console.log(getCookie("email"));
-          if (response.data.data.premission === "admin") {
-            navigate("/homeAdmin", { replace: true });
-          }
-          if (response.data.data.premission === "company") {
-            setCookie("company", response.data.data.company, 30);
-            navigate("/homeCompany", { replace: true });
-          }
+      const response = await axios.post("http://localhost:6500/login", { email, password });
+
+      if (response.data.success) {
+        const user = response.data.data;
+
+        // Set cookies based on user data
+        setCookie("email", email, 30);
+        if (user.premission === "admin") {
+          navigate("/homeAdmin", { replace: true });
+        } else if (user.premission === "company") {
+          setCookie("company", user.company, 30);
+          navigate("/homeCompany", { replace: true });
         }
       } else {
         deleteCookie("email");
-        return toast.error('Invalid credentials', {
+        toast.error('Invalid credentials', {
           position: "top-right",
           autoClose: 2500,
           hideProgressBar: false,
@@ -89,17 +85,11 @@ function Login(props) {
           progress: undefined,
           theme: "colored",
           transition: Slide,
-        });  
+        });
       }
     } catch (error) {
-
-//       console.error(
-//         "Error:",
-//         error.response ? error.response.data : error.message
-//       );
-//       alert(error.response ? error.response.data.message : error.message);
-      console.error("Error:", error.response ? error.response.data : error.message);//this was only "error" in the master branch, yuval changed it, may need to change back
-      return toast.error('Error logging in. Please try again.', {
+      console.error("Error:", error.response ? error.response.data : error.message);
+      toast.error('Error logging in. Please try again.', {
         position: "top-right",
         autoClose: 2500,
         hideProgressBar: false,
@@ -109,8 +99,7 @@ function Login(props) {
         progress: undefined,
         theme: "colored",
         transition: Slide,
-      });  
-
+      });
     }
   };
   const handleForgotPass = () => {
