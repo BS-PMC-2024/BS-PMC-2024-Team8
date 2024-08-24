@@ -58,7 +58,7 @@ const EditCustomer = () => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:6500/user/byid/${editedUser._id}`,
+        `http://localhost:6500/user/${editedUser.email}`,
         editedUser
       );
       if (response.status === 200) {

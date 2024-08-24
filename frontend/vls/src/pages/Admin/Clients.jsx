@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Header from '../Admin/componants/Header';
-import Sidebar from '../Admin/componants/sideBar';
+import Header from "../Admin/componants/Header";
+import Sidebar from "../Admin/componants/sideBar";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +35,7 @@ const Clients = () => {
           "http://localhost:6500/check-permission",
           { email }
         );
-        if (response.data.data.premission !== "admin") {
+        if (!response.data.permission === "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {

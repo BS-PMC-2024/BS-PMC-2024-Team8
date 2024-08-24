@@ -87,7 +87,7 @@ describe("EditCustomer Component", () => {
       const request = mock.history.put.find(
         (req) => req.url === "http://localhost:6500/user/test@example.com"
       );
-      expect(request);
+      expect(request).toBeTruthy();
     });
 
     // Advance the timers to trigger the setTimeout
@@ -95,7 +95,7 @@ describe("EditCustomer Component", () => {
 
     // Check if navigate was called with the correct path
     await waitFor(() => {
-      expect(navigate);
+      expect(navigate).toHaveBeenCalledWith("/customersAdmin");
     });
 
     // Clear the fake timers

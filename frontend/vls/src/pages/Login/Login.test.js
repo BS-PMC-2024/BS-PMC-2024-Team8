@@ -38,8 +38,6 @@ describe('Login Component', () => {
   beforeEach(() => {
     axios.post.mockClear();
     jest.clearAllMocks();
-    
-    axios.post.mockResolvedValue({ data: {data: { premission: 'admin' } } });
   });
 
   test('handles email change', () => {
@@ -52,7 +50,6 @@ describe('Login Component', () => {
   });
 
   test('handles password change', () => {
-    
     customRender(<Login />);
 
     const passwordInput = screen.getByPlaceholderText('Password');
@@ -62,7 +59,7 @@ describe('Login Component', () => {
   });
 
   test('handles form submission successfully', async () => {
-    axios.post.mockResolvedValueOnce({ data : {data: { success: true, premission: 'admin' } }});
+    axios.post.mockResolvedValueOnce({ data: { success: true, premission: 'admin' } });
     const navigateMock = jest.fn();
     useNavigate.mockReturnValue(navigateMock);
     
@@ -78,7 +75,7 @@ describe('Login Component', () => {
   });
 
   test('handles invalid credentials', async () => {
-    axios.post.mockResolvedValueOnce({ data: {data: { success: false } }});
+    axios.post.mockResolvedValueOnce({ data: { success: false } });
 
     customRender(<Login />);
 
@@ -89,7 +86,7 @@ describe('Login Component', () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/login', { email: 'invalid@example.com', password: 'wrongpassword' });
-      expect(toast.error);
+      expect(toast.error).toHaveBeenCalledWith('Error logging in. Please try again.', expect.any(Object));
     });
   });
 

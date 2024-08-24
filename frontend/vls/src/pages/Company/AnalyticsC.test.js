@@ -1,104 +1,106 @@
-// src/components/Analytics.test.js
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 import Analytics from '../Company/AnalyticsC';
-import Cookies from 'js-cookie';
 import { BrowserRouter as Router } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 // Mock axios
-const mock = new MockAdapter(axios);
+jest.mock('axios');
 
+// Mock Cookies
+jest.mock('js-cookie', () => ({
+    get: jest.fn().mockReturnValue('012'),  // Mock the cookie value
+  }));
+
+  const companyID = '012';
 describe('Analytics Component', () => {
   beforeEach(() => {
-    // Mock the necessary API responses
-    mock.onGet('http://localhost:6500/clients/testCompany').reply(200, {
-      clients: [
-        { Debt: 2000 },
-        { Debt: 5000 },
-        { Debt: 3000 }
-      ]
-    });
-
-    mock.onPost('http://localhost:6500/check-permission').reply(200, {
-      data: { premission: 'company' }
-    });
-
-    mock.onGet('http://localhost:6500/allprocesses/testCompany').reply(200, {
-      filteredProcesses: [
-        {
-          status: 'opened',
-          moneyC: '1000',
-          cname: 'Company A',
-          sector: 'Tech',
-          date: '01/01/2023'
-        },
-        {
-          status: 'completed',
-          moneyC: '2000',
-          cname: 'Company B',
-          sector: 'Finance',
-          date: '01/02/2023'
-        }
-      ]
-    });
-
-    mock.onGet('http://localhost:6500/transactions/testCompany').reply(200, {
-      transactions: [
-        { city: 'City A', age: '25', via: 'Cash', discount: '10%' },
-        { city: 'City B', age: '30', via: 'Card', discount: '20%' }
-      ]
-    });
-
-    // Mock cookies
-    Cookies.set('company', 'testCompany');
+    axios.get.mockClear();
+    // Set up the mock to return a specific cookie value
+    document.cookie = `company=${companyID}`;
+   
+    axios.post.mockResolvedValueOnce({ data: { data: { premission: 'company' } } });
   });
 
-  afterEach(() => {
-    mock.reset();
-    Cookies.remove('company');
-  });
-
-  test('renders Analytics component and fetches data correctly', async () => {
-    await act(async () => {
-      render(
-        <Router>
-          <Analytics />
-        </Router>
-      );
-    });
-
-    // Verify initial rendering
+  test('renders without crashing', () => {
+    render(
+      <Router>
+        <Analytics />
+      </Router>
+    );
     expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
-    expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
-    expect(screen.getByText('Monthly Proccess Opened')).toBeInTheDocument();
-    expect(screen.getByText('Top Cities')).toBeInTheDocument();
-    expect(screen.getByText('Ages of the Payers')).toBeInTheDocument();
-    expect(screen.getByText('Communication Apps')).toBeInTheDocument();
-    expect(screen.getByText('Top Discount Plans')).toBeInTheDocument();
   });
 
-  test('checks API data fetching and display', async () => {
-    await act(async () => {
-      render(
-        <Router>
-          <Analytics />
-        </Router>
-      );
-    });
+  test('fetches and displays user count', async () => {
+    axios.get.mockResolvedValueOnce({ data: { users: Array(10).fill({}) } });
 
-    // Verify API data display
+    render(
+      <Router>
+        <Analytics />
+      </Router>
+    );
+
     await waitFor(() => {
-      // The exact text might need to be adjusted based on the actual output
       expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
-      expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
-      expect(screen.getByText('Monthly Proccess Opened')).toBeInTheDocument();
-      expect(screen.getByText('Top Cities')).toBeInTheDocument();
-      expect(screen.getByText('Ages of the Payers')).toBeInTheDocument();
-      expect(screen.getByText('Communication Apps')).toBeInTheDocument();
-      expect(screen.getByText('Top Discount Plans')).toBeInTheDocument();
     });
+
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/clients/${companyID}`);
   });
 
+  test('fetches and processes data correctly for charts', async () => {
+    axios.get
+      .mockResolvedValueOnce({ data: { processes: [] } })
+      .mockResolvedValueOnce({ data: { transactions: [] } });
+
+    render(
+      <Router>
+        <Analytics />
+      </Router>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
+    });
+
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/allprocesses/${companyID}`);
+    expect(axios.get).toHaveBeenCalledWith(`http://localhost:6500/transactions/${companyID}`);
+  });
+
+  test('renders charts correctly', async () => {
+    axios.get
+      .mockResolvedValueOnce({
+        data: {
+          processes: [
+            { status: 'opened', moneyC: '100', cname: 'Company A', sector: 'Tech', date: '01/01/2023' },
+            { status: 'completed', moneyC: '200', cname: 'Company B', sector: 'Finance', date: '01/02/2023' },
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          transactions: [
+            { city: 'New York', age: '30', via: 'Email', discount: '10%' },
+            { city: 'Los Angeles', age: '25', via: 'SMS', discount: '15%' },
+          ],
+        },
+      });
+
+    render(
+      <Router>
+        <Analytics />
+      </Router>
+    );
+
+    await waitFor(() => {
+        expect(screen.getByText('Top Debt clients')).toBeInTheDocument();
+        expect(screen.getByText('Monthly Money Collected')).toBeInTheDocument();
+        expect(screen.getByText('Monthly Proccess Opened')).toBeInTheDocument();
+        expect(screen.getByText('Top Cities')).toBeInTheDocument();
+        expect(screen.getByText('Ages of the Payers')).toBeInTheDocument();
+        expect(screen.getByText('Communication Apps')).toBeInTheDocument();
+        expect(screen.getByText('Top Discount Plans')).toBeInTheDocument();
+    });
+
+  });
 });
