@@ -7,6 +7,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { format, parse } from 'date-fns';
 import emailjs from 'emailjs-com';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -25,7 +27,7 @@ const Payment = () => {
   const via = query.get('via');
   const file = query.get('file');
   const initialOptions = {
-    clientId: "AUw64R1RHWdRKv_e7P92hTsbT9gA8L5HZVFjhG",
+    clientId: "AUw64R1RHWdRKv_e7P92hTsbT9gA8L5HZVFjhG-qM0jUhpYqFmj3B2XImLaftht90qgxQTZFzRH1rXML",
     currency: "USD",
     intent: "capture",
 };
@@ -44,6 +46,7 @@ const Payment = () => {
     age: '',
     city: '',
     discount: '',
+    conformationCode: '',
     via: '',
     file: ''
   });
@@ -56,7 +59,18 @@ const Payment = () => {
     if (discount && discount.endsWith('%')) {
       discountValue = parseFloat(discount) / 100;
     }
-    const finalDebt = debtValue - (debtValue * discountValue);
+    function generateRandomCode() {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let code = '';
+      const codeLength = 20;
+  
+      for (let i = 0; i < codeLength; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+      }
+      return code;
+    }
+    const finalDebt = parseInt(debtValue - (debtValue * discountValue))+'';
     setPaymentData({
       name: name || '',
       phone: phone || '',
@@ -69,30 +83,19 @@ const Payment = () => {
       debt: finalDebt,
       date: formattedDate,
       expiry_date: '',
+      conformationCode: generateRandomCode(),
       file: file
     });
   }, [name, phone, mail, debt, age, city, cname, discount, via]);
 
-  function generateRandomCode() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let code = '';
-    const codeLength = 20;
-
-    for (let i = 0; i < codeLength; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      code += characters.charAt(randomIndex);
-    }
-    return code;
-  }
 
   const handleSendConfirmation = () => {
     emailjs.init("98g7Qzscyfz-S-J7p");
     const serviceId = "service_lxiaq84";
     const templateId = "template_kzggrep";
-    const generatedCode = generateRandomCode();
     emailjs.send(serviceId, templateId, {
       email: paymentData.mail,
-      code: generatedCode(),
+      code: paymentData.conformationCode,
       name: paymentData.name,
       debt: paymentData.debt,
       company: paymentData.cname,
@@ -120,40 +123,108 @@ const Payment = () => {
 
     // Validation logic
     if (!paymentData.card_number || !paymentData.expiry_date || !paymentData.cvv || !paymentData.id) {
-      alert('Please fill in all required fields.');
+      toast.error(`Please fill in all required fields.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (paymentData.card_number.length !== 16) {
-      alert('Card number must be 16 digits.');
+      toast.error(`Card number must be 16 digits.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (paymentData.cvv.length !== 3) {
-      alert('CVV must be 3 digits.');
+      toast.error(`CVV must be 3 digits.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (paymentData.id.length !== 9) {
-      alert('ID must be 9 digits.');
+      toast.error(`ID must be 9 digits.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     if (new Date(paymentData.expiry_date) < new Date()) {
-      alert('Invalid expiry date.');
+      toast.error(`Invalid expiry date.`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
 
     try {
-      console.log(paymentData);
       const res = await axios.post('http://localhost:6500/addTransaction', paymentData);
-      console.log(res);
       if (res.status === 200) {
-        alert('Payment Successful');
+        toast.success(`Payment Successful`, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
         await handleSendConfirmation();
       }
     } catch (err) {
-      alert('Payment Failed: ' + err);
+      toast.error(`Payment Failed: ${err}`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       console.log(err);
     }
   };
@@ -161,6 +232,8 @@ const Payment = () => {
   const maxPayments = paymentData.debt > 5000 ? 24 : 12;
 
   return (
+    <>
+    <ToastContainer />
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>Payment Information</Typography>
       <form onSubmit={handleSubmit} style={{ background: 'white', borderRadius: '0.2%', opacity: '85%' }}>
@@ -269,18 +342,39 @@ const Payment = () => {
                 }}
                 onApprove={(data, actions) => {
                   return actions.order.capture().then((details) => {
-                    alert('Payment Successful');
+                    toast.success(`Payment Successful`, {
+                      position: "top-right",
+                      autoClose: 2500,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                      transition: Slide,
+                    });
                     handleSendConfirmation();
                   });
                 }}
                 onError={(err) => {
                   console.error('PayPal Checkout onError', err);
-                  alert('Payment Failed');
+                  toast.error(`Payment Failed`, {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                  });
                 }}
             />
         </PayPalScriptProvider>
       </form>
     </Box>
+    </>
   );
 };
 

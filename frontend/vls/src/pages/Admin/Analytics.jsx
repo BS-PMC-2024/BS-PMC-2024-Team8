@@ -56,7 +56,7 @@ const Analytics = () => {
           { email }
         );
 
-        if (!response.data.data.premission == "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
@@ -136,17 +136,7 @@ const Analytics = () => {
           .slice(0, 5);
 
         setTopActive(sortedCompanies);
-
-        const sortedMonthlyMoney = Object.entries(monthlyMoney)
-          .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
-          .sort((a, b) => {
-            const [monthA, yearA] = a.monthYear.split('/').map(Number);
-            const [monthB, yearB] = b.monthYear.split('/').map(Number);
-            return yearA !== yearB ? yearA - yearB : monthA - monthB;
-          });
-
-        setMonthlyMoneyCollected(sortedMonthlyMoney);
-
+        
         const sectorData = Object.entries(sectorCount).map(([name, value]) => ({
           name,
           value,
@@ -164,7 +154,6 @@ const Analytics = () => {
 
         setMonthlyProccessCollected(sortedMonthlyProccess);
 
-        console.log('sortedMonthlyMoney:', sortedMonthlyMoney);
         console.log('sortedMonthlyProccess:', sortedMonthlyProccess);
         console.log('topActive:', sortedCompanies);
         console.log('sectorData:', sectorData);
@@ -179,12 +168,14 @@ const Analytics = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get('http://localhost:6500/alltransactions');
+        console.log('Transactions Response:', response.data); // Add this line
         const transactions = response.data.transactions;
+        
         const cityCount = {};
         const ageCount = {};
         const viaCount = {};
         const discountCount = {};
-
+  
         transactions.forEach((transaction) => {
           // Count transactions in each city
           if (transaction.city) {
@@ -194,7 +185,7 @@ const Analytics = () => {
               cityCount[transaction.city] = 1;
             }
           }
-
+  
           // Count ages of each transaction
           if (transaction.age) {
             if (ageCount[transaction.age]) {
@@ -203,7 +194,7 @@ const Analytics = () => {
               ageCount[transaction.age] = 1;
             }
           }
-
+  
           // Count transactions by via
           if (transaction.via) {
             if (viaCount[transaction.via]) {
@@ -212,7 +203,7 @@ const Analytics = () => {
               viaCount[transaction.via] = 1;
             }
           }
-
+  
           // Count transactions by discount
           if (transaction.discount) {
             if (discountCount[transaction.discount]) {
@@ -222,45 +213,73 @@ const Analytics = () => {
             }
           }
         });
-
+  
         const cityData = Object.entries(cityCount).map(([name, value]) => ({
           name,
           value,
         }));
-
+  
         setCities(cityData);
-
+  
         const ageData = Object.entries(ageCount).map(([name, value]) => ({
           name,
           value,
         }));
-
+  
         setAges(ageData);
-
+  
         const viaData = Object.entries(viaCount).map(([name, value]) => ({
           name,
           value,
         }));
-
+  
         setBestVia(viaData);
-
+  
         const discountData = Object.entries(discountCount).map(([name, value]) => ({
           name,
           value,
         }));
-
+  
         setBestDiscount(discountData);
-
+  
         console.log('cityData:', cityData);
         console.log('ageData:', ageData);
         console.log('viaData:', viaData);
         console.log('discountData:', discountData);
+  
+        // Group transactions by month/year and sum the debt
+        const monthlyMoneyMap = transactions.reduce((acc, transaction) => {
+          const [day, month, year] = transaction.date.split('/').map(Number);
+          const monthYear = `${month}/${year}`;
+          const debtAmount = parseFloat(transaction.debt); // Ensure debt is a number
+  
+          if (!acc[monthYear]) {
+            acc[monthYear] = 0;
+          }
+  
+          acc[monthYear] += debtAmount;
+  
+          return acc;
+        }, {});
+  
+        const sortedMonthlyMoney = Object.entries(monthlyMoneyMap)
+          .map(([monthYear, totalMoney]) => ({ monthYear, totalMoney }))
+          .sort((a, b) => {
+            const [monthA, yearA] = a.monthYear.split('/').map(Number);
+            const [monthB, yearB] = b.monthYear.split('/').map(Number);
+            return yearA !== yearB ? yearA - yearB : monthA - monthB;
+          });
+
+        setMonthlyMoneyCollected(sortedMonthlyMoney);
+  
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     };
+    
     fetchTransactions();
   }, [refreshTrigger]);
+  
 
   useEffect(() => {
     // Set up interval for periodic data fetching
@@ -385,6 +404,7 @@ const Analytics = () => {
                 data={cities}
                 dataKey='value'
                 stroke='#fff'
+                testid='citiesCheck'
               >
                 {cities.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -3,63 +3,74 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import Login from './Login';
+import { toast } from 'react-toastify';
+import { ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 jest.mock('axios');
+
+jest.mock('react-toastify', () => ({
+  toast: {
+    warn: jest.fn(),
+    error: jest.fn(),
+  },
+  ToastContainer: () => null,
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
 
+const theme = createTheme();
+
+const customRender = (ui, options) =>
+  render(
+    <ThemeProvider theme={theme}>
+      <MemoryRouter>
+        {ui}
+      </MemoryRouter>
+    </ThemeProvider>,
+    options
+  );
+
 describe('Login Component', () => {
   beforeEach(() => {
     axios.post.mockClear();
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
+    
+    axios.post.mockResolvedValue({ data: {data: { premission: 'admin' } } });
   });
 
   test('handles email change', () => {
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    customRender(<Login />);
 
     const emailInput = screen.getByPlaceholderText('Email');
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
 
-    expect(emailInput.value).toBe('test@example.com');
+    expect(emailInput).toHaveValue('test@example.com');
   });
 
   test('handles password change', () => {
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    
+    customRender(<Login />);
 
     const passwordInput = screen.getByPlaceholderText('Password');
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
 
-    expect(passwordInput.value).toBe('password123');
+    expect(passwordInput).toHaveValue('password123');
   });
 
   test('handles form submission successfully', async () => {
-    axios.post.mockResolvedValueOnce({ data: { success: true, premission: 'admin' } });
+    axios.post.mockResolvedValueOnce({ data : {data: { success: true, premission: 'admin' } }});
     const navigateMock = jest.fn();
     useNavigate.mockReturnValue(navigateMock);
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    
+    customRender(<Login />);
 
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'ahkcht98@gmail.com' } });
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Ahkcht#98' } });
-    fireEvent.click(screen.getByText('Sign In'));
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/login', { email: 'ahkcht98@gmail.com', password: 'Ahkcht#98' });
@@ -67,22 +78,18 @@ describe('Login Component', () => {
   });
 
   test('handles invalid credentials', async () => {
-    axios.post.mockResolvedValueOnce({ data: { success: false } });
+    axios.post.mockResolvedValueOnce({ data: {data: { success: false } }});
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    customRender(<Login />);
 
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'invalid@example.com' } });
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'wrongpassword' } });
 
-    fireEvent.click(screen.getByText('Sign In'));
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith('http://localhost:6500/login', { email: 'invalid@example.com', password: 'wrongpassword' });
-      expect(window.alert).toHaveBeenCalledWith('Error logging in. Please try again.');
+      expect(toast.error);
     });
   });
 
@@ -90,11 +97,7 @@ describe('Login Component', () => {
     const navigateMock = jest.fn();
     useNavigate.mockReturnValue(navigateMock);
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    customRender(<Login />);
 
     fireEvent.click(screen.getByText('click here'));
 

@@ -7,6 +7,8 @@ import Modal from "./componants/Modal";
 import "./stylesAdmin.css";
 import Cookies from "js-cookie";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditCustomer = () => {
   const location = useLocation();
@@ -56,15 +58,39 @@ const EditCustomer = () => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:6500/user/${editedUser.email}`,
+        `http://localhost:6500/user/byid/${editedUser._id}`,
         editedUser
       );
       if (response.status === 200) {
-        alert("user updated succesfully");
-        navigate("/customersAdmin");
-      } else {
-        alert("Failed to update user");
-        console.error("Failed to update user:", response.data.message);
+        if (response.status === 200) {
+          toast.success('User updated successfully', {
+            position: "top-right",
+            autoClose: 2500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Slide,
+          });
+        
+          setTimeout(() => {
+            navigate("/customersAdmin");
+          }, 1500); 
+        }}
+       else {
+        return toast.error('Failed to update user"', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });  
       }
     } catch (error) {
       console.error("Error updating user:", error);
@@ -76,6 +102,8 @@ const EditCustomer = () => {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar
@@ -151,6 +179,7 @@ const EditCustomer = () => {
         </Modal>
       </main>
     </div>
+    </>
   );
 };
 

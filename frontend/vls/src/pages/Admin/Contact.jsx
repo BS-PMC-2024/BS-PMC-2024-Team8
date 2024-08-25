@@ -6,7 +6,8 @@ import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 import Sidebar from './componants/sideBar';
 import emailjs from '@emailjs/browser';
-
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { TextField, Button, MenuItem, FormControl, InputLabel, Select, FormHelperText } from '@mui/material';
 
@@ -32,7 +33,7 @@ function Contact() {
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
 
-        if (!response.data.permission === "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -56,7 +57,7 @@ function Contact() {
     const getData = async () => {
       try {
         const email = Cookies.get('email');
-        const response = await axios.get(process.env.SERVERENDPOINT+`/${email}`);
+        const response = await axios.get(`http://localhost:6500/${email}`);
         const user = response.data;
         setName(user.data.full_name);
       } catch (error) {
@@ -96,7 +97,7 @@ function Contact() {
     if (!phoneRegex.test(phone)) {
       return;
     }
-    if(userEmail === "N") 
+    if(userEmail === "None") 
     {
       setEmailError("Please chose a company you want to send Email to")
       return;
@@ -111,9 +112,29 @@ function Contact() {
       phone: phone,
       description: description,
       });
-      alert("Email successfully sent. Check your inbox.");
+      return toast.success('Email successfully sent. Check your inbox.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
     } catch (error) {
-      alert("Failed to send email. Please try again.");
+      toast.error('Failed to send email. Please try again.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });  
     }
   };
 
@@ -157,6 +178,8 @@ function Contact() {
   }, []);
 
   return (
+    <>
+    <ToastContainer />
     <div className='grid-container' data-testid='contact'>
       <Header OpenSidebar={OpenSidebar} />
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
@@ -261,6 +284,7 @@ function Contact() {
         </form> 
       </main>
     </div>
+    </>
   );
 }
 

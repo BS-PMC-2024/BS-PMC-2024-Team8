@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast,Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import logo from "./assets/logo.png";
+// import { encrypt } from "../../../../../backend/scripts/encryption";
 // Login component
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -38,36 +41,65 @@ function Login(props) {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
-  // Function to handle the form submit
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email === "" || password === "")
-      return alert("Please fill in all fields");
-    try {
-      const response = await axios.post("http://localhost:6500/login", {
-        email,
-        password,
+
+    if (email === "" || password === "") {
+      return toast.warn('Please fill in all fields', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
       });
-      console.log(response.data.data);
-      if (response.data.data.premission) {
-        if (!getCookie(email)) {
-          setCookie("email", email, 30);
-          console.log(getCookie("email"));
-          if (response.data.data.premission === "admin") {
-            navigate("/homeAdmin", { replace: true });
-          }
-          if (response.data.data.premission === "company") {
-            setCookie("company", response.data.data.company, 30);
-            navigate("/homeCompany", { replace: true });
-          }
+    }
+
+    try {
+      const response = await axios.post("http://localhost:6500/login", { email, password });
+
+      if (response.data.success) {
+        const user = response.data.data;
+
+        // Set cookies based on user data
+        setCookie("email", email, 30);
+        if (user.premission === "admin") {
+          navigate("/homeAdmin", { replace: true });
+        } else if (user.premission === "company") {
+          setCookie("company", user.company, 30);
+          navigate("/homeCompany", { replace: true });
         }
       } else {
         deleteCookie("email");
-        alert("Invalid credentials");
+        toast.error('Invalid credentials', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error logging in. Please try again.");
+      console.error("Error:", error.response ? error.response.data : error.message);
+      toast.error('Error logging in. Please try again.', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     }
   };
   const handleForgotPass = () => {
@@ -75,6 +107,8 @@ function Login(props) {
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="form-container sign-in-container">
       <form onSubmit={handleSubmit}>
         <div
@@ -114,6 +148,7 @@ function Login(props) {
       </form>
       {message && <p>{message}</p>}
     </div>
+    </>
   );
 }
 

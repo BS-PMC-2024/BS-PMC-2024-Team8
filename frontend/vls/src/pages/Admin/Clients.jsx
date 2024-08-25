@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Header from "../Admin/componants/Header";
-import Sidebar from "../Admin/componants/sideBar";
+import Header from '../Admin/componants/Header';
+import Sidebar from '../Admin/componants/sideBar';
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import "../Admin/stylesAdmin.css";
 import "../Admin/Customers_table.css";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { toast, Slide } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Clients = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -31,7 +35,7 @@ const Clients = () => {
           "http://localhost:6500/check-permission",
           { email }
         );
-        if (!response.data.permission === "admin") {
+        if (response.data.data.premission !== "admin") {
           navigate("/", { replace: true });
         }
       } catch (error) {
@@ -55,14 +59,107 @@ const Clients = () => {
     };
     fetchPeople();
   }, []);
-
   const handleDelete = async (person) => {
-    try {
-      await axios.delete(`http://localhost:6500/person/${person._id}`);
-      setPeople((people) => people.filter((p) => p._id !== person._id));
-    } catch (error) {
-      console.error("Error deleting person:", error);
-    }
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div style={{ textAlign: 'center', padding: '20px', background: '#222831', borderRadius: '8px', color: '#fff' }}>
+            <h1 style={{ marginBottom: '20px' }}>Warning</h1>
+            <p style={{ marginBottom: '20px' }}>Are you sure you want to delete this customer?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await axios.delete(`http://localhost:6500/person/${person._id}`);                    ;
+                    if (response.status === 200) {
+                      setPeople((people) => people.filter((p) => p._id !== person._id));  
+                      setTimeout(() => {
+                        toast.success('Person deleted successfully', {
+                          position: "top-right",
+                          autoClose: 2500,
+                          hideProgressBar: false,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                          theme: "colored",
+                          transition: Slide,
+                        });
+                      }, 0);
+  
+                    } else {
+                      toast.error(`Failed to delete person: ${response.data.message}`, {
+                        position: "top-right",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Slide,
+                      });
+                    }
+                  } catch (error) {
+                    console.error("Error deleting person: ", error);
+                    toast.error("Error deleting person", {
+                      position: "top-right",
+                      autoClose: 2500,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                      transition: Slide,
+                    });
+                  } finally {
+                    onClose(); 
+                  }
+                }}
+                style={{
+                  backgroundColor: '#059212',
+                  color: 'white',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => {
+                  toast.info('Person deletion canceled', {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                  });
+                  onClose(); // Close the confirm alert on cancel
+                }}
+                style={{
+                  backgroundColor: '#C40C0C',
+                  color: 'white',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        );
+      },
+      closeOnClickOutside: false,
+    });
   };
 
   const handleNameSearch = (event) => {

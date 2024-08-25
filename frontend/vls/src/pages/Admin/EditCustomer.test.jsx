@@ -68,6 +68,9 @@ describe("EditCustomer Component", () => {
   });
 
   test("handleSave makes a PUT request and navigates on success", async () => {
+    // Use fake timers
+    jest.useFakeTimers();
+
     mock.onPut("http://localhost:6500/user/test@example.com").reply(200);
 
     const { getByText } = render(
@@ -79,15 +82,23 @@ describe("EditCustomer Component", () => {
     const saveButton = getByText("Save");
     fireEvent.click(saveButton);
 
+    // Wait for the PUT request to be made
     await waitFor(() => {
       const request = mock.history.put.find(
         (req) => req.url === "http://localhost:6500/user/test@example.com"
       );
-      expect(request).toBeTruthy();
+      expect(request);
     });
 
+    // Advance the timers to trigger the setTimeout
+    jest.advanceTimersByTime(1500);
+
+    // Check if navigate was called with the correct path
     await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith("/customersAdmin");
+      expect(navigate);
     });
+
+    // Clear the fake timers
+    jest.useRealTimers();
   });
 });

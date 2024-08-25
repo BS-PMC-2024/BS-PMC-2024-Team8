@@ -7,6 +7,8 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import video from '../../assets/video.mp4'; 
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NewProcess = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -31,7 +33,7 @@ const NewProcess = () => {
       }
       try {
         const response = await axios.post('http://localhost:6500/check-permission', { email });
-        if (!response.data.premission == "company") {
+        if (response.data.data.premission !== "company") {
           navigate('/', { replace: true });
         }
         else
@@ -70,24 +72,74 @@ const NewProcess = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      alert('Please select a file');
+      toast.error(`Please select a file`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
     if(file.name.split('.')[1] !== 'xlsx')
     {
-      alert('Please select a excel file');
+      toast.error(`Please select a excel file'`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
     if (!discount) {
-      alert('Please select a discount');
+      toast.error(`Please select a discount'`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
       return;
     }
     if (!strategy) {
-      alert('Please select a strategy');
+      toast.error(`Please select a strategy'`, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+      });
     }
     if (!communication.email && !communication.sms) 
       {
-        alert('Please select a communication');
+        toast.error(`Please select a communication'`, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
         return;
       }      
     const formData = new FormData();
@@ -110,7 +162,6 @@ const NewProcess = () => {
       });
 
       if (response.status === 200) {
-        alert('File uploaded successfully');
         setFile(null);
         setDiscount('10%');
         setCommunication({
@@ -118,6 +169,18 @@ const NewProcess = () => {
           sms: false
         });
         setStrategy('');
+        setTimeout(() => {
+          toast.success(`File uploaded successfully'`, {
+            position: "top-right",
+            autoClose: 2500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Slide,
+          });}, 1000);
       } 
       console.log(response);
 
@@ -125,7 +188,17 @@ const NewProcess = () => {
     catch (error) {
       if (error.response && error.response.data) {
         // Custom error message from backend
-        alert(`File upload failed: ${error.response.data.message}`);
+        toast.error(`File upload failed: ${error.response.data.message}'`, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+        });
       } 
     }
   };
@@ -139,6 +212,8 @@ const NewProcess = () => {
   };
 
     return (
+      <>
+        <ToastContainer />
         <div className='grid-container'>
           <Header OpenSidebar={OpenSidebar} />
           <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
@@ -276,6 +351,7 @@ const NewProcess = () => {
             </Paper>
           </div>
         </div>
+        </>
       );
 };
 export default NewProcess;

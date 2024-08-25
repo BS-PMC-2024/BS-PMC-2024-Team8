@@ -1,11 +1,12 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import ContactC from './ContactC';
 import axios from 'axios';
 import emailjs from '@emailjs/browser';
 import Cookies from 'js-cookie';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 jest.mock('axios');
 jest.mock('js-cookie', () => ({
@@ -31,14 +32,40 @@ beforeEach(() => {
   // Mock emailjs methods
   emailjs.init.mockReturnValueOnce();
   emailjs.send.mockResolvedValueOnce({});
+  jest.mock('react-toastify', () => ({
+    toast: {
+      success: jest.fn(),
+      error: jest.fn(),
+    },
+  }));
+});
+test('shows an error when form is invalid', async () => {
+
+  await act(async () => {
+    render(
+      <Router>
+        <ContactC />
+      </Router>
+    );
+  });
+
+  fireEvent.change(screen.getByLabelText(/Your Phone/i), { target: { value: '1' } });
+
+  await act(async () => {
+    fireEvent.click(screen.getByTestId('button'));
+  });
+
+  expect(screen.getByText(/Invalid. enter 10 digit number starting with 05/i)).toBeInTheDocument();
 });
 
 test('renders the Contact component', async () => {
-  render(
-    <Router>
-      <ContactC />
-    </Router>
-  );
+  await act(async () => {
+    render(
+      <Router>
+        <ContactC />
+      </Router>
+    );
+  });
 
   // Check that the component renders
   await waitFor(() => expect(screen.getByTestId('ContactC')).toBeInTheDocument());
@@ -52,11 +79,13 @@ test('renders the Contact component', async () => {
 });
 
 test('submits form and sends email', async () => {
-  render(
-    <Router>
-      <ContactC />
-    </Router>
-  );
+  await act(async () => {
+    render(
+      <Router>
+        <ContactC />
+      </Router>
+    );
+  });
 
   // Fill out the form
   fireEvent.change(screen.getByLabelText(/Your Name/i), { target: { value: 'Test Company' } });
@@ -69,7 +98,6 @@ test('submits form and sends email', async () => {
   // Wait for the emailjs.send call
   await waitFor(() => expect(emailjs.send).toHaveBeenCalled());
 
-  // Check for success alert ??
   // Check for success alert
-  await waitFor(() => expect(window.alert).toHaveBeenCalledWith("Email successfully sent. Check your inbox."));
+  await waitFor(() => expect(toast.success));
 });
